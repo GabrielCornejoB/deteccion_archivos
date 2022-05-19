@@ -5,6 +5,7 @@ import re                                               #Regular expressions
 import os                                               #Llamados al sistema
 
 l_extensiones = ['.csv', '.xlsx', '.xls', '.txt']       #Lista extensiones de archivos que se pueden buscar
+l_searchWords = []                                      #Lista de palabras clave a buscar
 
 #Función que busca en una dirección, en este caso './test_folder', los archivos con la extensión elegida
 def file_mapping(ext, num, word):
@@ -27,11 +28,11 @@ def file_mapping(ext, num, word):
 
 def search_csv(csvName, word):
     df = pd.read_csv(csvName, sep=';')
-    print(('    Veces que se repite: {}'.format(len(re.findall(word, df.to_string())))))
+    print(('    Veces que se repite: {}'.format(len(re.findall(word, df.to_string().upper())))))
 
 def search_excel(excelName, word):
     df = pd.read_excel(excelName, sheet_name='Hoja1')
-    print('    Veces que se repite: {}'.format(len(re.findall(word, df.to_string()))))
+    print('    Veces que se repite: {}'.format(len(re.findall(word, df.to_string().upper()))))
 
 def search_xls(excelName, word):
     # df = pd.read_excel(excelName)
@@ -43,7 +44,7 @@ def search_txt(txtName, word):
     lines = txtFile.readlines()
     count = 0
     for line in lines:
-        times = len(re.findall(word, line))
+        times = len(re.findall(word, line.upper()))
         if(times != 0):
             count += times
     print('   Veces que se repite: {}'.format(count))
@@ -57,15 +58,16 @@ def main():
         except:
             print("\n[Error]: Ingrese un valor númerico")
         search_word = input('\nIngrese la palabra que desea buscar: ')
+        word_upper = search_word.upper()
         try:
             if ext == 1:
-                file_mapping(l_extensiones[ext-1], ext, search_word)
+                file_mapping(l_extensiones[ext-1], ext, word_upper)
             elif ext == 2:
-                file_mapping(l_extensiones[ext-1], ext, search_word)
+                file_mapping(l_extensiones[ext-1], ext, word_upper)
             elif ext == 3:
-                file_mapping(l_extensiones[ext-1], ext, search_word)
+                file_mapping(l_extensiones[ext-1], ext, word_upper)
             elif ext == 4:
-                file_mapping(l_extensiones[ext-1], ext, search_word)
+                file_mapping(l_extensiones[ext-1], ext, word_upper)
             else:
                 print("\n[Error]: Ingrese una opción valida")
         except:
