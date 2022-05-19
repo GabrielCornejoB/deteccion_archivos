@@ -22,9 +22,11 @@ def file_mapping(ext, num, word):
             except:
                 print('\n[Error]: search_excel falló')
         elif(num == 3):
-            search_excel(fileName, word)
-        else:
+            print('a')
+        elif(num == 4):
             search_txt(fileName, word)
+        elif(num == 5):
+            print('para todos')
 
 def search_csv(csvName, word):
     df = pd.read_csv(csvName, sep=';')
@@ -68,6 +70,11 @@ def main():
                 file_mapping(l_extensiones[ext-1], ext, word_upper)
             elif ext == 4:
                 file_mapping(l_extensiones[ext-1], ext, word_upper)
+            elif ext == 5:
+                it = 0
+                for e in l_extensiones:
+                    it += 1
+                    file_mapping(e, it, word_upper)
             else:
                 print("\n[Error]: Ingrese una opción valida")
         except:
