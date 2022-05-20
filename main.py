@@ -1,5 +1,6 @@
 from fileinput import filename
-import glob                                             #Recorrer achivos
+import glob
+from msilib.schema import File                                             #Recorrer achivos
 import pandas as pd                                     #Dataframes
 import re                                               #Regular expressions
 import os                                               #Llamados al sistema
@@ -22,7 +23,7 @@ def file_mapping(ext, num, word):
             except:
                 print('\n[Error]: search_excel falló')
         elif(num == 3):
-            print('a')
+            search_xls(fileName, word)
         elif(num == 4):
             search_txt(fileName, word)
         elif(num == 5):
@@ -37,8 +38,8 @@ def search_excel(excelName, word):
     print('    Veces que se repite: {}'.format(len(re.findall(word, df.to_string().upper()))))
 
 def search_xls(excelName, word):
-    # df = pd.read_excel(excelName)
-    # print('    Veces que se repite: {}'.format(len(re.findall(word, df.to_string()))))
+    df = pd.read_excel(excelName, engine='xlrd')
+    print('    Veces que se repite: {}'.format(len(re.findall(word, df.to_string().upper()))))
     print('En proceso')
 
 def search_txt(txtName, word):
@@ -61,23 +62,23 @@ def main():
             print("\n[Error]: Ingrese un valor númerico")
         search_word = input('\nIngrese la palabra que desea buscar: ')
         word_upper = search_word.upper()
-        try:
-            if ext == 1:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 2:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 3:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 4:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 5:
-                it = 0
-                for e in l_extensiones:
-                    it += 1
-                    file_mapping(e, it, word_upper)
-            else:
-                print("\n[Error]: Ingrese una opción valida")
-        except:
-            print('\n[Error]: file_mapping() falló')
+        # try:
+        if ext == 1:
+            file_mapping(l_extensiones[ext-1], ext, word_upper)
+        elif ext == 2:
+            file_mapping(l_extensiones[ext-1], ext, word_upper)
+        elif ext == 3:
+            file_mapping(l_extensiones[ext-1], ext, word_upper)
+        elif ext == 4:
+            file_mapping(l_extensiones[ext-1], ext, word_upper)
+        elif ext == 5:
+            it = 0
+            for e in l_extensiones:
+                it += 1
+                file_mapping(e, it, word_upper)
+        else:
+            print("\n[Error]: Ingrese una opción valida")
+        # except:
+        #     print('\n[Error]: file_mapping() falló')
     print('\nEND')
 main()
