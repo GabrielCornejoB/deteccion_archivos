@@ -69,32 +69,39 @@ def search_txt(txtName, word):
 
 def main():
     ext = 0
-    while(ext < 1 or ext > 4):
-        extension = input('\nIngrese el # del tipo de archivo que quiere buscar:\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
+    while(ext < 1 or ext > 5):
+        valid = 1
+        extension = input('\nIngrese el # del tipo de archivo que quiere buscar (o \'0\' para salir):\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
         try:
             ext = int(extension)
+            if(ext == 0):
+                break
+            if(ext < 1 or ext > 5):
+                print("\n[Error]: Ingrese un valor valido")
+                valid = -1
         except:
             print("\n[Error]: Ingrese un valor númerico")
-            return
-        search_word = input('\nIngrese la palabra que desea buscar: ')
-        word_upper = search_word.upper()
-        try:
-            if ext == 1:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 2:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 3:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 4:
-                file_mapping(l_extensiones[ext-1], ext, word_upper)
-            elif ext == 5:
-                it = 0
-                for e in l_extensiones:
-                    it += 1
-                    file_mapping(e, it, word_upper)
-            else:
-                print("\n[Error]: Ingrese una opción valida")
-        except:
-            print('\n[Error]: file_mapping() falló')
+            valid = -1
+        if(valid == 1):
+            search_word = input('\nIngrese la palabra que desea buscar: ')
+            word_upper = search_word.upper()
+            try:
+                if ext == 1:
+                    file_mapping(l_extensiones[ext-1], ext, word_upper)
+                elif ext == 2:
+                    file_mapping(l_extensiones[ext-1], ext, word_upper)
+                elif ext == 3:
+                    file_mapping(l_extensiones[ext-1], ext, word_upper)
+                elif ext == 4:
+                    file_mapping(l_extensiones[ext-1], ext, word_upper)
+                elif ext == 5:
+                    it = 0
+                    for e in l_extensiones:
+                        it += 1
+                        file_mapping(e, it, word_upper)
+                else:
+                    print("\n[Error]: Ingrese una opción valida")
+            except:
+                print('\n[Error]: file_mapping() falló')
     print('\nEND')
 main()
