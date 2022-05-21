@@ -8,41 +8,36 @@ import os                                               #Llamados al sistema
 l_extensiones = ['.csv', '.xlsx', '.xls', '.txt']       #Lista extensiones de archivos que se pueden buscar
 l_searchWords = []                                      #Lista de palabras clave a buscar
 
-def file_mapping2(ext):
+def file_mapping(ext, num):
     str1 = 'test_folder/*'
     str2 = str1 + ext
     for fileName in glob.glob(str2, recursive=True):
         print('- {}'.format(fileName))
-        for w in  l_searchWords:
-            search_txt(fileName, w.upper());   
-
-
-#Función que busca en una dirección, en este caso './test_folder', los archivos con la extensión elegida
-def file_mapping(ext, num, word):
-    str1 = 'test_folder/*'
-    str2 = str1 + ext
-    # print("\nArchivos que finalizan con la extensión \'{}\':".format(ext))
-    for fileName in glob.glob(str2, recursive=True):
         if(num == 1):
             try:
-                search_csv(fileName, word)
+                for w in  l_searchWords:
+                    search_csv(fileName, w.upper())
             except:
                 print('\n[Error]: search_csv falló')
         elif(num == 2):
             try:
-                search_excel(fileName, word)
+                for w in  l_searchWords:
+                    search_excel(fileName, w.upper())
             except:
                 print('\n[Error]: search_excel falló')
         elif(num == 3):
             try:
-                search_xls(fileName, word)
+                for w in  l_searchWords:
+                    search_xls(fileName, w.upper())
             except:
                 print('\n[Error]: search_xls falló')
         elif(num == 4):
             try:
-                search_txt(fileName, word)
+                for w in  l_searchWords:
+                    search_txt(fileName, w.upper())
             except:
-                print('\n[Error]: search_txt falló')
+                print('\n[Error]: search_txt falló')  
+
 
 def search_csv(csvName, word):
     df = pd.read_csv(csvName, sep=';')
@@ -89,6 +84,7 @@ def main():
         try:
             ext = int(extension)
             if(ext == 0):
+                print('\n[EXIT]')
                 break
             if(ext < 1 or ext > 5):
                 print("\n[Error]: Ingrese un valor valido")
@@ -97,26 +93,14 @@ def main():
             print("\n[Error]: Ingrese un valor númerico")
             valid = -1
         if(valid == 1):   
-            # search_word = input('\nIngrese la palabra que desea buscar: ')
-            # word_upper = w.upper()
             try:
-                if ext == 1:
-                    # file_mapping(l_extensiones[ext-1], ext, word_upper)
-                    print('a')
-                elif ext == 2:
-                    # file_mapping(l_extensiones[ext-1], ext, word_upper)
-                    print('a')
-                elif ext == 3:
-                    # file_mapping(l_extensiones[ext-1], ext, word_upper)
-                    print('a')
-                elif ext == 4:
-                    # file_mapping(l_extensiones[ext-1], ext, word_upper)
-                    file_mapping2(l_extensiones[ext-1])
-                # elif ext == 5:
-                #     it = 0
-                #     for e in l_extensiones:
-                #         it += 1
-                #         file_mapping(e, it, word_upper)
+                if (ext > 0 and ext < 5):
+                    file_mapping(l_extensiones[ext-1], ext)
+                elif ext == 5:
+                    it = 0
+                    for e in l_extensiones:
+                        it += 1
+                        file_mapping(e, it)
                 else:
                     print("\n[Error]: Ingrese una opción valida")
             except:
