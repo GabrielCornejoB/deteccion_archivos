@@ -6,7 +6,7 @@ import os                                               #Llamados al sistema
 l_extensiones = ['.csv', '.xlsx', '.xls', '.txt']       #Lista extensiones de archivos que se pueden buscar
 l_searchWords = []                                      #Lista de palabras clave a buscar
 
-#Función que encuentra que archivos tienen la extensión entregada
+#Función que encuentra que archivos tienen la extensión elegida
 def file_mapping(ext, num):
     str1 = '**/*'
     str2 = str1 + ext
@@ -78,7 +78,6 @@ def main():
     ext = 0
     load_words()
     while(ext < 1 or ext > 5):
-        valid = 1
         extension = input('\nIngrese el # del tipo de archivo que quiere buscar (o \'0\' para salir):\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
         try:
             ext = int(extension)
