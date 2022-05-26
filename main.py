@@ -37,7 +37,7 @@ def file_mapping(ext, num, loc):
         search = glob.glob(str2, recursive=True)
     except Exception as e:
         print('[ERROR]: Ruta no valida. {}'.format(e))
-    output.write('-'*75)
+    output.write('-'*100)
     output.write('\n')
     output.write("{} archivos encontrados con extensión \'{}\'\n\n".format(len(search), ext))
     for fileName in search:
@@ -175,7 +175,7 @@ def main():
         elif location == 4:
             l_l = ['DOWNLOADS', 'DESKTOP', 'DOCUMENTS']
             for l in range(3):
-                output.write('\n\n\t\t\t\t[{}]\n'.format(l_l[l]))
+                output.write('\n\n[{}]\n'.format(l_l[l]))
                 if (num > 0 and num < 5):
                     file_mapping(l_extensiones[num-1], num, l+1)
                 elif num == 5:
