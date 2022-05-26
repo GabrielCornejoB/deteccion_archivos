@@ -15,14 +15,22 @@ def file_mapping(ext, num, loc):
     str1 = ''.join([str(elem) for elem in l_path])
     if(loc == 1):
         str2 = 'Downloads/**/*'
+        str2 = str1 + str2 + ext
     elif(loc == 2):
         str2 = 'Desktop/**/*'
+        str2 = str1 + str2 + ext
     elif(loc == 3):
         str2 = 'Documents/**/*'
-    str3 = str1 + str2 + ext
-    if(loc == 5):
-        str3 = 'C:/**/*'
-    search = glob.glob(str3, recursive=True)
+        str2 = str1 + str2 + ext
+    elif(loc == 5):
+        str2 = 'C:/**/*' + ext
+    elif(loc == 6):
+        custom_path = input('\nIngrese la ruta del directorio en el que desea buscar (debe terminar en \'/\' y no debe llevar \'\\\'): ')
+        str2 = custom_path + '**/*' + ext
+    try:
+        search = glob.glob(str2, recursive=True)
+    except Exception as e:
+        print('[ERROR]: Ruta no valida. {}'.format(e))
     print("\n\n")
     print('-'*75)
     print("{} archivos encontrados con extensión \'{}\'\n".format(len(search), ext))
@@ -110,40 +118,40 @@ def load_words():
         l_searchWords.append(line.strip())
 
 def main():
-    ext = 0
+    num = 0
     load_words()
-    while(ext < 1 or ext > 5):
+    while(num < 1 or num > 5):
         extension = input('\nIngrese el # del tipo de archivo que quiere buscar (o \'0\' para salir):\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
         try:
-            ext = int(extension)
-            if(ext == 0):
+            num = int(extension)
+            if(num == 0):
                 print('\n[EXIT]')
                 return
-            if(ext < 1 or ext > 5):
+            if(num < 1 or num > 5):
                 print("\n[Error]: Ingrese un valor valido")
                 continue          
         except:
             print("\n[Error]: Ingrese un valor númerico")
             continue 
     location = 0
-    while(location < 1 or location > 5):
-        location = input('\nIngrese el # correspondiente a la carpeta donde desea buscar (o \'0\' para salir):\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n')   
+    while(location < 1 or location > 6):
+        location = input('\nIngrese el # correspondiente a la carpeta donde desea buscar (o \'0\' para salir):\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')   
         try:
             location = int(location)
-            if(ext == 0):
+            if(num == 0):
                 print('\n[EXIT]')
                 return
-            if(location < 1 or location > 5):
+            if(location < 1 or location > 6):
                 print("\n[Error]: Ingrese un valor valido")
                 continue
         except:
             print("\n[Error]: Ingrese un valor númerico")
             continue
     try:
-        if(location > 0 and location < 6):
-            if (ext > 0 and ext < 5):
-                file_mapping(l_extensiones[ext-1], ext, location)
-            elif ext == 5:
+        if(location > 0 and location < 7 and location != 4):
+            if (num > 0 and num < 5):
+                file_mapping(l_extensiones[num-1], num, location)
+            elif num == 5:
                 it = 0
                 for e in l_extensiones:
                     it += 1
@@ -152,13 +160,13 @@ def main():
             l_l = ['DOWNLOADS', 'DESKTOP', 'DOCUMENTS']
             for l in range(3):
                 print('\n\n\t\t\t\t[{}]\n'.format(l_l[l]))
-                if (ext > 0 and ext < 5):
-                    file_mapping(l_extensiones[ext-1], ext, l+1)
-                elif ext == 5:
+                if (num > 0 and num < 5):
+                    file_mapping(l_extensiones[num-1], num, l+1)
+                elif num == 5:
                     it = 0
                     for e in l_extensiones:
                         it += 1
-                        file_mapping(e, it, l+1)
+                        file_mapping(e, it, l+1)        
     except Exception as e:
         print('\n[Error]: file_mapping() falló. {}'.format(e))
     print('\nEND')
