@@ -25,3 +25,10 @@ Para instalarlas, entramos a la terminal del sistema y escribimos el siguiente c
 
 
 ## **Cómo usar el programa**
+Una vez cumplidos todos los requisitos previos podemos ejecutar el programa, nos ubicamos en la ruta donde tengamos el proyecto y en la terminal ejecutamos el comando:
+
+    py main.py
+
+Una vez ejecutado entraremos en dos etapas que tiene el programa, en la primera elegiremos que tipo de archivos queremos buscar (mencionados arriba), debemos de colocar el número correspondiente a la opción de nuestra preferencia. Luego saldrán otras opciones donde podremos elegir en que carpeta (tambien llamado directorio) deseamos buscar el tipo de archivos elegido previamente, podemos elegir una ruta en específica o las que esta ya predefinidas.
+
+Una vez elegidas estas dos opciones, el programa comenzará a ejecutarse y buscar entre todos los archivos las palabras del archivo de texto que ya tuvimos que haber colocado en un paso anterior, al finalizar si no hubo ningún error, el programa creará un nuevo archivo de texto con la salida (output) del programa, este tendra como nombre la fecha y hora de la ejecución del comando, y ya dentro de este encontraremos en la parte superior la busqueda realizada y despues el resultado de la busqueda.
