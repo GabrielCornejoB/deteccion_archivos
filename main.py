@@ -2,14 +2,19 @@ import glob                                             #Recorrer achivos
 import pandas as pd                                     #Dataframes
 import re                                               #Regular expressions
 import os                                               #Llamados al sistema
-import warnings
+import warnings                                         #Ignorar warnings de excels con reglas de formato
+from datetime import datetime                           #Para nombre archivo
 
 l_extensiones = ['.csv', '.xlsx', '.xls', '.txt']       #Lista extensiones de archivos que se pueden buscar
 l_searchWords = []                                      #Lista de palabras clave a buscar
 
+now = datetime.now()
+day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
+output_name = 'output-'+day_timef+'.txt'
+output = None
+
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
-#Función que encuentra que archivos tienen la extensión elegida
 def file_mapping(ext, num, loc):
     l_path = ['C:/Users/', os.getlogin(),'/']
     str1 = ''.join([str(elem) for elem in l_path])
@@ -26,18 +31,19 @@ def file_mapping(ext, num, loc):
         str2 = 'C:/**/*' + ext
     elif(loc == 6):
         custom_path = input('\nIngrese la ruta del directorio en el que desea buscar (debe terminar en \'/\' y no debe llevar \'\\\'): ')
+        output.write("Busqueda en ruta: " + custom_path + "\n")
         str2 = custom_path + '**/*' + ext
     try:
         search = glob.glob(str2, recursive=True)
     except Exception as e:
         print('[ERROR]: Ruta no valida. {}'.format(e))
-    print("\n\n")
-    print('-'*75)
-    print("{} archivos encontrados con extensión \'{}\'\n".format(len(search), ext))
+    output.write('-'*75)
+    output.write('\n')
+    output.write("{} archivos encontrados con extensión \'{}\'\n\n".format(len(search), ext))
     for fileName in search:
         if(fileName == 'search_words.txt'):
             continue
-        print('- {}'.format(fileName))      
+        output.write('- {}\n'.format(fileName))
         if(num == 1):
             try:
                 for w in  l_searchWords:
@@ -66,41 +72,37 @@ def file_mapping(ext, num, loc):
                         break
             except Exception as e:
                 print('\n[Error]: search_txt falló {}'.format(e))  
+    output.write("\n\n\n")
 
-# Buscan de forma distinta para cada tipo de archivo
 def search_csv(csvName, word):
     try:
         df = pd.read_csv(csvName, sep=';')
     except Exception as e:
-        # print('\n[ERROR]: read_csv falló {}'.format(e))
         return -1
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0):
-        print(('    Veces que se repite \'{}\': {}'.format(word, count)))
+        output.write(('    Veces que se repite \'{}\': {}\n'.format(word, count)))
 def search_excel(excelName, word):
     try:
         df = pd.read_excel(excelName)
     except Exception as e:
-        # print('\n[ERROR]: read_excel falló {}'.format(e))
         return -1   
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0):
-        print('    Veces que se repite \'{}\': {}'.format(word, count))
+        output.write('    Veces que se repite \'{}\': {}\n'.format(word, count))
 def search_xls(excelName, word):
     try:
         df = pd.read_excel(excelName, engine='xlrd')
     except Exception as e:
-        # print('\n[ERROR]: read_excel (xls) falló {}'.format(e))
         return -1
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0):
-        print('    Veces que se repite \'{}\': {}'.format(word, count))
+        output.write('    Veces que se repite \'{}\': {}\n'.format(word, count))
 def search_txt(txtName, word):
     try:
         txtFile = open(txtName)
         lines = txtFile.readlines()
     except Exception as e:
-        print('\n[ERROR]: archivo no valido'.format())
         return -1
     count = 0
     for line in lines:
@@ -108,20 +110,25 @@ def search_txt(txtName, word):
         if(times != 0):
             count += times
     if(count > 0):
-        print('   Veces que se repite \'{}\': {}'.format(word, count))
+        output.write('   Veces que se repite \'{}\': {}\n'.format(word, count))
 
-# Carga palabras clave del archivo de texto
 def load_words():
     txtWords = open('search_words.txt')
     lines = txtWords.readlines()
+    print(len(lines))
+    if(len(lines) == 0):
+        return -1
     for line in lines:
         l_searchWords.append(line.strip())
 
 def main():
     num = 0
-    load_words()
+    if(load_words() == -1):
+        print('\n[ERROR]: No hay palabras de busqueda en el archivo de texto')
+        return
     while(num < 1 or num > 5):
         extension = input('\nIngrese el # del tipo de archivo que quiere buscar (o \'0\' para salir):\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
+        l_e = ['.csv','.xlsx','.xls','.txt','Todas las extensiones']
         try:
             num = int(extension)
             if(num == 0):
@@ -135,9 +142,10 @@ def main():
             continue 
     location = 0
     while(location < 1 or location > 6):
-        location = input('\nIngrese el # correspondiente a la carpeta donde desea buscar (o \'0\' para salir):\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')   
+        locationI = input('\nIngrese el # correspondiente a la carpeta donde desea buscar (o \'0\' para salir):\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')   
+        l_p = ["Descargas", "Escritorio", "Documentos", "Descargas, Escritorio y Documentos", "Disco C:", "Ruta personalizada"]
         try:
-            location = int(location)
+            location = int(locationI)
             if(num == 0):
                 print('\n[EXIT]')
                 return
@@ -147,7 +155,10 @@ def main():
         except:
             print("\n[Error]: Ingrese un valor númerico")
             continue
+    output = open(output_name, "w", encoding='utf-8')
+    output.write("[BUSQUEDA] Ext: "+l_e[num-1]+", Ruta: "+l_p[location-1]+"\n")
     try:
+        print("\nEn proceso... espere por favor")
         if(location > 0 and location < 7 and location != 4):
             if (num > 0 and num < 5):
                 file_mapping(l_extensiones[num-1], num, location)
@@ -159,7 +170,7 @@ def main():
         elif location == 4:
             l_l = ['DOWNLOADS', 'DESKTOP', 'DOCUMENTS']
             for l in range(3):
-                print('\n\n\t\t\t\t[{}]\n'.format(l_l[l]))
+                output.write('\n\n\t\t\t\t[{}]\n'.format(l_l[l]))
                 if (num > 0 and num < 5):
                     file_mapping(l_extensiones[num-1], num, l+1)
                 elif num == 5:
@@ -169,5 +180,6 @@ def main():
                         file_mapping(e, it, l+1)        
     except Exception as e:
         print('\n[Error]: file_mapping() falló. {}'.format(e))
-    print('\nEND')
+    output.close()
+    print('\nFIN')
 main()
