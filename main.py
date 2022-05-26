@@ -11,7 +11,7 @@ l_searchWords = []                                      #Lista de palabras clave
 now = datetime.now()
 day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
 output_name = 'output-'+day_timef+'.txt'
-output = None
+output = open(output_name, "w", encoding='utf-8')
 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
@@ -125,6 +125,8 @@ def main():
     num = 0
     if(load_words() == -1):
         print('\n[ERROR]: No hay palabras de busqueda en el archivo de texto')
+        output.close()
+        os.remove(output_name)
         return
     while(num < 1 or num > 5):
         extension = input('\nIngrese el # del tipo de archivo que quiere buscar (o \'0\' para salir):\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
@@ -133,6 +135,8 @@ def main():
             num = int(extension)
             if(num == 0):
                 print('\n[EXIT]')
+                output.close()
+                os.remove(output_name)
                 return
             if(num < 1 or num > 5):
                 print("\n[Error]: Ingrese un valor valido")
@@ -148,6 +152,8 @@ def main():
             location = int(locationI)
             if(num == 0):
                 print('\n[EXIT]')
+                output.close()
+                os.remove(output_name)
                 return
             if(location < 1 or location > 6):
                 print("\n[Error]: Ingrese un valor valido")
@@ -155,7 +161,6 @@ def main():
         except:
             print("\n[Error]: Ingrese un valor númerico")
             continue
-    output = open(output_name, "w", encoding='utf-8')
     output.write("[BUSQUEDA] Ext: "+l_e[num-1]+", Ruta: "+l_p[location-1]+"\n")
     try:
         print("\nEn proceso... espere por favor")
