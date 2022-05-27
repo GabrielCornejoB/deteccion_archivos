@@ -10,8 +10,12 @@ l_searchWords = []                                      #Lista de palabras clave
 
 now = datetime.now()
 day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
+
 output_name = 'output-'+day_timef+'.txt'
 output = open(output_name, "w", encoding='utf-8')
+
+summary_name = "summary-"+day_timef+".txt"
+summary = open(summary_name, "w", encoding='utf-8')
 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
@@ -73,6 +77,23 @@ def file_mapping(ext, num, loc):
             except Exception as e:
                 print('\n[Error]: search_txt falló {}'.format(e))  
     output.write("\n\n\n")
+    create_summary(search, num)
+
+def create_summary(l_search, num):
+    summary.write("RESUMEN GENERAL")
+    for w in l_searchWords:
+        summary.write("La palabra " + w + " se encuentra en los siguientes archivos:\n")
+        for fileName in l_search:
+            if(num == 1):
+                try:
+                    search = search_csv(fileName, w.upper())
+                    if(search == -1):
+                        break
+                    elif(search > 0):
+                        summary.write(fileName)
+                except Exception as e:
+                    print('\n[Error]: search_csv falló {}'.format(e))
+            print('a')
 
 def search_csv(csvName, word):
     try:
@@ -82,6 +103,7 @@ def search_csv(csvName, word):
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0):
         output.write(('    Veces que se repite \'{}\': {}\n'.format(word, count)))
+    return count
 def search_excel(excelName, word):
     try:
         df = pd.read_excel(excelName)
@@ -90,6 +112,7 @@ def search_excel(excelName, word):
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0):
         output.write('    Veces que se repite \'{}\': {}\n'.format(word, count))
+    return count
 def search_xls(excelName, word):
     try:
         df = pd.read_excel(excelName, engine='xlrd')
@@ -98,6 +121,7 @@ def search_xls(excelName, word):
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0):
         output.write('    Veces que se repite \'{}\': {}\n'.format(word, count))
+    return count
 def search_txt(txtName, word):
     try:
         txtFile = open(txtName)
@@ -111,6 +135,7 @@ def search_txt(txtName, word):
             count += times
     if(count > 0):
         output.write('   Veces que se repite \'{}\': {}\n'.format(word, count))
+    return count
 
 def load_words():
     txtWords = open('search_words.txt')
