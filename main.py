@@ -1,3 +1,4 @@
+from fileinput import filename
 import glob                                             #Recorrer achivos
 import pandas as pd                                     #Dataframes
 import re                                               #Regular expressions
@@ -51,78 +52,96 @@ def file_mapping(ext, num, loc):
         if(num == 1):
             try:
                 for w in  l_searchWords:
-                    if(search_csv(fileName, w.upper()) == -1):
+                    if(search_csv(fileName, w.upper(), 1) == -1):
                         break
             except Exception as e:
                 print('\n[Error]: search_csv falló {}'.format(e))
         elif(num == 2):
             try:
                 for w in  l_searchWords:
-                    if(search_excel(fileName, w.upper()) == -1):
+                    if(search_excel(fileName, w.upper(), 1) == -1):
                         break
             except Exception as e:
                 print('\n[Error]: search_excel falló {}'.format(e))
         elif(num == 3):
             try:
                 for w in  l_searchWords:
-                    if(search_xls(fileName, w.upper()) == -1):
+                    if(search_xls(fileName, w.upper(), 1) == -1):
                         break
             except Exception as e:
                 print('\n[Error]: search_xls falló {}'.format(e))
         elif(num == 4):
             try:
                 for w in  l_searchWords:
-                    if(search_txt(fileName, w.upper()) == -1):
+                    if(search_txt(fileName, w.upper(), 1) == -1):
                         break
             except Exception as e:
                 print('\n[Error]: search_txt falló {}'.format(e))  
     output.write("\n\n\n")
-    create_summary(search, num)
+    create_summary(search, num, str2)
 
-def create_summary(l_search, num):
-    summary.write("RESUMEN GENERAL")
+def create_summary(l_search, num, bus):
+    summary.write("RESUMEN BUSQUEDA: " + bus)
     for w in l_searchWords:
-        summary.write("La palabra " + w + " se encuentra en los siguientes archivos:\n")
+        summary.write("\n\nLa palabra " + w.upper() + " se encuentra en los siguientes archivos:\n")
         for fileName in l_search:
             if(num == 1):
                 try:
-                    search = search_csv(fileName, w.upper())
-                    if(search == -1):
-                        break
-                    elif(search > 0):
-                        summary.write(fileName)
+                    search = search_csv(fileName, w.upper(), 0)
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
                 except Exception as e:
                     print('\n[Error]: search_csv falló {}'.format(e))
-            print('a')
+            elif(num == 2):
+                try:
+                    search = search_excel(fileName, w.upper(), 0)
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
+                except Exception as e:
+                    print('\n[Error]: search_excel falló {}'.format(e))     
+            elif(num == 3):
+                try:
+                    search = search_xls(fileName, w.upper(), 0)
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
+                except Exception as e:
+                    print('\n[Error]: search_xls falló {}'.format(e)) 
+            elif(num == 4):
+                try:
+                    search = search_txt(fileName, w.upper(), 0)
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
+                except Exception as e:
+                    print('\n[Error]: search_txt falló {}'.format(e)) 
 
-def search_csv(csvName, word):
+def search_csv(csvName, word, out):
     try:
         df = pd.read_csv(csvName, sep=';')
     except Exception as e:
         return -1
     count = len(re.findall(word, df.to_string().upper()))
-    if(count > 0):
+    if(count > 0 and out == 1):
         output.write(('    Veces que se repite \'{}\': {}\n'.format(word, count)))
     return count
-def search_excel(excelName, word):
+def search_excel(excelName, word, out):
     try:
         df = pd.read_excel(excelName)
     except Exception as e:
         return -1   
     count = len(re.findall(word, df.to_string().upper()))
-    if(count > 0):
+    if(count > 0 and out == 1):
         output.write('    Veces que se repite \'{}\': {}\n'.format(word, count))
     return count
-def search_xls(excelName, word):
+def search_xls(excelName, word, out):
     try:
         df = pd.read_excel(excelName, engine='xlrd')
     except Exception as e:
         return -1
     count = len(re.findall(word, df.to_string().upper()))
-    if(count > 0):
+    if(count > 0 and out == 1):
         output.write('    Veces que se repite \'{}\': {}\n'.format(word, count))
     return count
-def search_txt(txtName, word):
+def search_txt(txtName, word, out):
     try:
         txtFile = open(txtName)
         lines = txtFile.readlines()
@@ -133,7 +152,7 @@ def search_txt(txtName, word):
         times = len(re.findall(word, line.upper()))
         if(times != 0):
             count += times
-    if(count > 0):
+    if(count > 0 and out == 1):
         output.write('   Veces que se repite \'{}\': {}\n'.format(word, count))
     return count
 
