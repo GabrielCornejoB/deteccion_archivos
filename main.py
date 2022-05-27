@@ -230,5 +230,6 @@ def main():
     except Exception as e:
         print('\n[Error]: file_mapping() falló. {}'.format(e))
     output.close()
+    summary.close()
     print('\nFIN')
 main()
