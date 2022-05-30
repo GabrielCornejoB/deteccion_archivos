@@ -1,4 +1,3 @@
-from fileinput import filename
 import glob                                             #Recorrer achivos
 import pandas as pd                                     #Dataframes
 import re                                               #Regular expressions
@@ -235,11 +234,11 @@ def main():
                         file_mapping(e, it, l+1)        
     except Exception as e:
         print('\n[Error]: file_mapping() falló. {}'.format(e))
-    create_summary()
-    # try:
-        
-    # except Exception as e:
-    #     print('\n[ERROR]: create_summary() falló. {}'.format(e))
+    
+    try:
+        create_summary()
+    except Exception as e:
+        print('\n[ERROR]: create_summary() falló. {}'.format(e))
     output.close()
     summary.close()
     print('\nFIN')
