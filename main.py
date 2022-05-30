@@ -8,6 +8,7 @@ from datetime import datetime                           #Para nombre archivo
 
 l_extensiones = ['.csv', '.xlsx', '.xls', '.txt']       #Lista extensiones de archivos que se pueden buscar
 l_searchWords = []                                      #Lista de palabras clave a buscar
+l_sumFiles = []                                         #Lista de todos los archivos para el resumen
 
 now = datetime.now()
 day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
@@ -78,41 +79,43 @@ def file_mapping(ext, num, loc):
             except Exception as e:
                 print('\n[Error]: search_txt falló {}'.format(e))  
     output.write("\n\n\n")
-    create_summary(search, num, str2)
+    l_sumFiles.extend(search)
 
-def create_summary(l_search, num, bus):
-    summary.write("RESUMEN BUSQUEDA: " + bus)
+def create_summary():
+    summary.write("RESUMEN BUSQUEDA: ")
     for w in l_searchWords:
         summary.write("\n\nLa palabra " + w.upper() + " se encuentra en los siguientes archivos:\n")
-        for fileName in l_search:
-            if(num == 1):
+        for fileName in l_sumFiles:
+            if(fileName == 'search_words.txt'):
+                continue
+            if fileName.endswith('.csv'):
                 try:
                     search = search_csv(fileName, w.upper(), 0)
                     if(search > 0):
                         summary.write(' - ' + fileName + '\n')
                 except Exception as e:
-                    print('\n[Error]: search_csv falló {}'.format(e))
-            elif(num == 2):
+                    print('\n[Error]: search_csv falló. ' + e)
+            elif fileName.endswith('.xlsx'):
                 try:
                     search = search_excel(fileName, w.upper(), 0)
                     if(search > 0):
                         summary.write(' - ' + fileName + '\n')
                 except Exception as e:
-                    print('\n[Error]: search_excel falló {}'.format(e))     
-            elif(num == 3):
+                    print('\n[Error]: search_xlsx falló. ' + e)
+            elif fileName.endswith('.xls'):
                 try:
                     search = search_xls(fileName, w.upper(), 0)
                     if(search > 0):
                         summary.write(' - ' + fileName + '\n')
                 except Exception as e:
-                    print('\n[Error]: search_xls falló {}'.format(e)) 
-            elif(num == 4):
+                    print('\n[Error]: search_xls falló. ' + e)
+            elif fileName.endswith('.txt'):
                 try:
                     search = search_txt(fileName, w.upper(), 0)
                     if(search > 0):
                         summary.write(' - ' + fileName + '\n')
                 except Exception as e:
-                    print('\n[Error]: search_txt falló {}'.format(e)) 
+                    print('\n[Error]: search_txt falló. ' + e)
 
 def search_csv(csvName, word, out):
     try:
@@ -171,6 +174,7 @@ def main():
         print('\n[ERROR]: No hay palabras de busqueda en el archivo de texto')
         output.close()
         os.remove(output_name)
+        os.remove(summary_name)
         return
     while(num < 1 or num > 5):
         extension = input('\nIngrese el # del tipo de archivo que quiere buscar (o \'0\' para salir):\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
@@ -181,6 +185,7 @@ def main():
                 print('\n[EXIT]')
                 output.close()
                 os.remove(output_name)
+                os.remove(summary_name)
                 return
             if(num < 1 or num > 5):
                 print("\n[Error]: Ingrese un valor valido")
@@ -198,6 +203,7 @@ def main():
                 print('\n[EXIT]')
                 output.close()
                 os.remove(output_name)
+                os.remove(summary_name)
                 return
             if(location < 1 or location > 6):
                 print("\n[Error]: Ingrese un valor valido")
@@ -229,6 +235,11 @@ def main():
                         file_mapping(e, it, l+1)        
     except Exception as e:
         print('\n[Error]: file_mapping() falló. {}'.format(e))
+    create_summary()
+    # try:
+        
+    # except Exception as e:
+    #     print('\n[ERROR]: create_summary() falló. {}'.format(e))
     output.close()
     summary.close()
     print('\nFIN')
