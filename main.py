@@ -176,16 +176,10 @@ def main():
         os.remove(summary_name)
         return
     while(num < 1 or num > 5):
-        extension = input('\nIngrese el # del tipo de archivo que quiere buscar (o \'0\' para salir):\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
+        extension = input('\nIngrese el # del tipo de archivo que quiere buscar:\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
         l_e = ['.csv','.xlsx','.xls','.txt','Todas las extensiones']
         try:
             num = int(extension)
-            if(num == 0):
-                print('\n[EXIT]')
-                output.close()
-                os.remove(output_name)
-                os.remove(summary_name)
-                return
             if(num < 1 or num > 5):
                 print("\n[Error]: Ingrese un valor valido")
                 continue          
@@ -194,16 +188,10 @@ def main():
             continue 
     location = 0
     while(location < 1 or location > 6):
-        locationI = input('\nIngrese el # correspondiente a la carpeta donde desea buscar (o \'0\' para salir):\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')   
+        locationI = input('\nIngrese el # correspondiente a la carpeta donde desea buscar:\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')   
         l_p = ["Descargas", "Escritorio", "Documentos", "Descargas, Escritorio y Documentos", "Disco C:", "Ruta personalizada"]
         try:
             location = int(locationI)
-            if(num == 0):
-                print('\n[EXIT]')
-                output.close()
-                os.remove(output_name)
-                os.remove(summary_name)
-                return
             if(location < 1 or location > 6):
                 print("\n[Error]: Ingrese un valor valido")
                 continue
