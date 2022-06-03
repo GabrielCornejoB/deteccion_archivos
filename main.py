@@ -5,7 +5,6 @@ import os                                               #Llamados al sistema
 import warnings                                         #Ignorar warnings de excels con reglas de formato
 from datetime import datetime                           #Para nombre archivo
 
-l_extensiones = ['.csv', '.xlsx', '.xls', '.txt']       #Lista extensiones de archivos que se pueden buscar
 l_searchWords = []                                      #Lista de palabras clave a buscar
 l_sumFiles = []                                         #Lista de todos los archivos para el resumen
 
@@ -119,7 +118,7 @@ def create_summary():
 def search_csv(csvName, word, out):
     try:
         df = pd.read_csv(csvName, sep=';')
-    except Exception as e:
+    except Exception:
         return -1
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0 and out == 1):
@@ -128,7 +127,7 @@ def search_csv(csvName, word, out):
 def search_excel(excelName, word, out):
     try:
         df = pd.read_excel(excelName)
-    except Exception as e:
+    except Exception:
         return -1   
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0 and out == 1):
@@ -137,7 +136,7 @@ def search_excel(excelName, word, out):
 def search_xls(excelName, word, out):
     try:
         df = pd.read_excel(excelName, engine='xlrd')
-    except Exception as e:
+    except Exception:
         return -1
     count = len(re.findall(word, df.to_string().upper()))
     if(count > 0 and out == 1):
@@ -147,7 +146,7 @@ def search_txt(txtName, word, out):
     try:
         txtFile = open(txtName)
         lines = txtFile.readlines()
-    except Exception as e:
+    except Exception:
         return -1
     count = 0
     for line in lines:
@@ -168,24 +167,28 @@ def load_words():
         l_searchWords.append(line.strip())
 
 def main():
-    num = 0
+    # 1. Revisa si el archivo de texto con las palabras de busqueda está vacío
     if(load_words() == -1):
         print('\n[ERROR]: No hay palabras de busqueda en el archivo de texto')
         output.close()
         os.remove(output_name)
         os.remove(summary_name)
         return
-    while(num < 1 or num > 5):
-        extension = input('\nIngrese el # del tipo de archivo que quiere buscar:\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
-        l_e = ['.csv','.xlsx','.xls','.txt','Todas las extensiones']
+
+    l_extensiones = ['.csv', '.xlsx', '.xls', '.txt', 'Todas las anteriores']    
+    # 2. El programa pide al usuario que extensiones desea buscar
+    ext = 0
+    while(ext < 1 or ext > 5):
+        input_ext = input('\nIngrese el # del tipo de archivo que quiere buscar:\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
+        l_e = ['.csv','.xlsx','.xls','.txt','Todas las extensiones']        #?
         try:
-            num = int(extension)
-            if(num < 1 or num > 5):
-                print("\n[Error]: Ingrese un valor valido")
-                continue          
+            ext = int(input_ext)          
         except:
             print("\n[Error]: Ingrese un valor númerico")
             continue 
+        if(ext < 1 or ext > 5):
+            print("\n[Error]: Ingrese un valor valido")
+            
     location = 0
     while(location < 1 or location > 6):
         locationI = input('\nIngrese el # correspondiente a la carpeta donde desea buscar:\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')   
@@ -229,5 +232,5 @@ def main():
         print('\n[ERROR]: create_summary() falló. {}'.format(e))
     output.close()
     summary.close()
-    print('\nFIN')
 main()
+print('FIN DEL PROGRAMA')
