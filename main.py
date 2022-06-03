@@ -1,128 +1,127 @@
-import glob                                             #Recorrer achivos
-import pandas as pd                                     #Dataframes
-import re                                               #Regular expressions
-import os                                               #Llamados al sistema
-import warnings                                         #Ignorar warnings de excels con reglas de formato
-from datetime import datetime                           #Para nombre archivo
+import glob                                                     #Recorrer achivos
+import pandas as pd                                             #Dataframes
+import re                                                       #Regular expressions
+import os                                                       #Llamados al sistema
+import warnings                                                 #Ignorar warnings de excels con reglas de formato
+from datetime import datetime                                   #Para nombre archivo
 
-l_searchWords = []                                      #Lista de palabras clave a buscar
-l_sumFiles = []                                         #Lista de todos los archivos para el resumen
+l_exts = ['.csv','.xlsx','.xls','.txt','Todas las anteriores']  #Lista con las extensiones de los archivos a buscar
+l_searchWords = []                                              #Lista de palabras clave a buscar
+l_sumFiles = []                                                 #Lista de todos los archivos para el resumen
 
 now = datetime.now()
 day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
 
-output_name = 'output-'+day_timef+'.txt'
-output = open(output_name, "w", encoding='utf-8')
-
-summary_name = "summary-"+day_timef+".txt"
-summary = open(summary_name, "w", encoding='utf-8')
-
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
-def file_mapping(ext, num, loc):
+def file_mapping(ext, path, output, summary):
     l_path = ['C:/Users/', os.getlogin(),'/']
-    str1 = ''.join([str(elem) for elem in l_path])
-    if(loc == 1):
-        str2 = 'Downloads/**/*'
-        str2 = str1 + str2 + ext
-    elif(loc == 2):
-        str2 = 'Desktop/**/*'
-        str2 = str1 + str2 + ext
-    elif(loc == 3):
-        str2 = 'Documents/**/*'
-        str2 = str1 + str2 + ext
-    elif(loc == 5):
-        str2 = 'C:/**/*' + ext
-    elif(loc == 6):
+    user_path = ''.join([str(elem) for elem in l_path])
+    folder_path = ['Downloads/**/*', 'Desktop/**/*', 'Documents/**/*', '.','C:/**/*']
+    str_ext = l_exts[ext-1]
+    if(path < 6):
+        full_path = user_path + folder_path[path-1] + str_ext
+    elif(path == 6):
         custom_path = input('\nIngrese la ruta del directorio en el que desea buscar (debe terminar en \'/\' y no debe llevar \'\\\'): ')
         output.write("Busqueda en ruta: " + custom_path + "\n")
-        str2 = custom_path + '**/*' + ext
-    try:
-        search = glob.glob(str2, recursive=True)
-    except Exception as e:
-        print('[ERROR]: Ruta no valida. {}'.format(e))
-    output.write('-'*100)
-    output.write('\n')
-    output.write("{} archivos encontrados con extensión \'{}\'\n\n".format(len(search), ext))
-    for fileName in search:
-        if(fileName == 'search_words.txt'):
-            continue
-        output.write('- {}\n'.format(fileName))
-        if(num == 1):
-            try:
-                for w in  l_searchWords:
-                    if(search_csv(fileName, w.upper(), 1) == -1):
-                        break
-            except Exception as e:
-                print('\n[Error]: search_csv falló {}'.format(e))
-        elif(num == 2):
-            try:
-                for w in  l_searchWords:
-                    if(search_excel(fileName, w.upper(), 1) == -1):
-                        break
-            except Exception as e:
-                print('\n[Error]: search_excel falló {}'.format(e))
-        elif(num == 3):
-            try:
-                for w in  l_searchWords:
-                    if(search_xls(fileName, w.upper(), 1) == -1):
-                        break
-            except Exception as e:
-                print('\n[Error]: search_xls falló {}'.format(e))
-        elif(num == 4):
-            try:
-                for w in  l_searchWords:
-                    if(search_txt(fileName, w.upper(), 1) == -1):
-                        break
-            except Exception as e:
-                print('\n[Error]: search_txt falló {}'.format(e))  
-    output.write("\n\n\n")
-    l_sumFiles.extend(search)
+        summary.write("Busqueda en ruta: " + custom_path + "\n")
+        full_path = custom_path + '**/*' + str_ext
 
-def create_summary():
-    summary.write("RESUMEN BUSQUEDA: ")
-    for w in l_searchWords:
-        summary.write("\n\nLa palabra " + w.upper() + " se encuentra en los siguientes archivos:\n")
-        for fileName in l_sumFiles:
-            if(fileName == 'search_words.txt'):
+    # Busqueda cuando no es la opción 4 (buscar en Documentos, Descargas y Escritorio)
+    if(path != 4):
+        try:
+            search = glob.glob(full_path, recursive=True)
+        except Exception as e:
+            print('[ERROR]: Ruta no valida. ' + e)
+
+        output.write('-'*100)
+        output.write('\n' + len(search) + 'archivos encontrados con extensión \'' + str_ext + '\'\n\n')
+        for file_name in search:
+            if('search_words.txt' in file_name):
                 continue
-            if fileName.endswith('.csv'):
-                try:
-                    search = search_csv(fileName, w.upper(), 0)
-                    if(search > 0):
-                        summary.write(' - ' + fileName + '\n')
-                except Exception as e:
-                    print('\n[Error]: search_csv falló. ' + e)
-            elif fileName.endswith('.xlsx'):
-                try:
-                    search = search_excel(fileName, w.upper(), 0)
-                    if(search > 0):
-                        summary.write(' - ' + fileName + '\n')
-                except Exception as e:
-                    print('\n[Error]: search_xlsx falló. ' + e)
-            elif fileName.endswith('.xls'):
-                try:
-                    search = search_xls(fileName, w.upper(), 0)
-                    if(search > 0):
-                        summary.write(' - ' + fileName + '\n')
-                except Exception as e:
-                    print('\n[Error]: search_xls falló. ' + e)
-            elif fileName.endswith('.txt'):
-                try:
-                    search = search_txt(fileName, w.upper(), 0)
-                    if(search > 0):
-                        summary.write(' - ' + fileName + '\n')
-                except Exception as e:
-                    print('\n[Error]: search_txt falló. ' + e)
+            output.write('- ' + file_name + '\n')    
+            try:
+                if(ext == 1 or ext == 5):
+                    for w in l_searchWords:
+                        search_ext = search_csv(file_name, w.upper())
+                        if(search_ext > 0):
+                            break
+                        output.write('    Veces que se repite \'' + w + '\': ' + search_ext + '\n')
+                    output.write("\n\n\n")
+                if(ext == 2 or ext == 5):
+                    for w in l_searchWords:
+                        search_ext = search_excel(file_name, w.upper())
+                        if(search_ext > 0):
+                            break
+                        output.write('    Veces que se repite \'' + w + '\': ' + search_ext + '\n')
+                    output.write("\n\n\n")
+                if(ext == 3 or ext == 5):
+                    for w in l_searchWords:
+                        search_ext = search_xls(file_name, w.upper())
+                        if(search_ext > 0):
+                            break
+                        output.write('    Veces que se repite \'' + w + '\': ' + search_ext + '\n')   
+                    output.write("\n\n\n") 
+                if(ext == 4 or ext == 5):
+                    for w in l_searchWords:
+                        search_ext = search_txt(file_name, w.upper())
+                        if(search_ext > 0):
+                            break
+                        output.write('    Veces que se repite \'' + w + '\': ' + search_ext + '\n') 
+                    output.write("\n\n\n")
+            except Exception as e:
+                print('\nNo fue posible leer el archivo: ' + file_name + 'Error: ' + e)
+        l_sumFiles.extend(search)
+    # else:
+    #     try:
+    #         print('a')
+    #         # for i in range(3):            
+    #     except Exception as e:
+    #         print('[ERROR]: Ruta no valida. ' + e)   
+    
 
-def search_csv(csvName, word, out):
+# def create_summary():
+#     summary.write("RESUMEN BUSQUEDA: ")
+#     for w in l_searchWords:
+#         summary.write("\n\nLa palabra " + w.upper() + " se encuentra en los siguientes archivos:\n")
+#         for fileName in l_sumFiles:
+#             if(fileName == 'search_words.txt'):
+#                 continue
+#             if fileName.endswith('.csv'):
+#                 try:
+#                     search = search_csv(fileName, w.upper(), 0)
+#                     if(search > 0):
+#                         summary.write(' - ' + fileName + '\n')
+#                 except Exception as e:
+#                     print('\n[Error]: search_csv falló. ' + e)
+#             elif fileName.endswith('.xlsx'):
+#                 try:
+#                     search = search_excel(fileName, w.upper(), 0)
+#                     if(search > 0):
+#                         summary.write(' - ' + fileName + '\n')
+#                 except Exception as e:
+#                     print('\n[Error]: search_xlsx falló. ' + e)
+#             elif fileName.endswith('.xls'):
+#                 try:
+#                     search = search_xls(fileName, w.upper(), 0)
+#                     if(search > 0):
+#                         summary.write(' - ' + fileName + '\n')
+#                 except Exception as e:
+#                     print('\n[Error]: search_xls falló. ' + e)
+#             elif fileName.endswith('.txt'):
+#                 try:
+#                     search = search_txt(fileName, w.upper(), 0)
+#                     if(search > 0):
+#                         summary.write(' - ' + fileName + '\n')
+#                 except Exception as e:
+#                     print('\n[Error]: search_txt falló. ' + e)
+
+def search_csv(csvName, word):
     try:
         df = pd.read_csv(csvName, sep=';')
     except Exception:
         return -1
     count = len(re.findall(word, df.to_string().upper()))
-    if(count > 0 and out == 1):
-        output.write(('    Veces que se repite \'{}\': {}\n'.format(word, count)))
     return count
 def search_excel(excelName, word, out):
     try:
@@ -170,17 +169,12 @@ def main():
     # 1. Revisa si el archivo de texto con las palabras de busqueda está vacío
     if(load_words() == -1):
         print('\n[ERROR]: No hay palabras de busqueda en el archivo de texto')
-        output.close()
-        os.remove(output_name)
-        os.remove(summary_name)
         return
-
-    l_extensiones = ['.csv', '.xlsx', '.xls', '.txt', 'Todas las anteriores']    
+   
     # 2. El programa pide al usuario que extensiones desea buscar
     ext = 0
     while(ext < 1 or ext > 5):
-        input_ext = input('\nIngrese el # del tipo de archivo que quiere buscar:\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')
-        l_e = ['.csv','.xlsx','.xls','.txt','Todas las extensiones']        #?
+        input_ext = input('\nIngrese el # del tipo de archivo que quiere buscar:\n(1) .csv\n(2) .xlsx\n(3) .xls\n(4) .txt\n(5) Todas las anteriores\n')       
         try:
             ext = int(input_ext)          
         except:
@@ -188,26 +182,36 @@ def main():
             continue 
         if(ext < 1 or ext > 5):
             print("\n[Error]: Ingrese un valor valido")
-            
-    location = 0
-    while(location < 1 or location > 6):
-        locationI = input('\nIngrese el # correspondiente a la carpeta donde desea buscar:\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')   
-        l_p = ["Descargas", "Escritorio", "Documentos", "Descargas, Escritorio y Documentos", "Disco C:", "Ruta personalizada"]
+
+    # 3. El programa pide al usuario que ingrese la dirección donde desea buscar       
+    path = 0
+    while(path < 1 or path > 6):
+        input_path = input('\nIngrese el # correspondiente a la carpeta donde desea buscar:\n(1) Descargas\n(2) Escritorio\n(3) Documentos\n(4) Todas las anteriores\n(5) Todo el disco C:\n(6) Escribir ruta manualmente\n')    
         try:
-            location = int(locationI)
-            if(location < 1 or location > 6):
-                print("\n[Error]: Ingrese un valor valido")
-                continue
+            path = int(input_path)
         except:
             print("\n[Error]: Ingrese un valor númerico")
+        if(path < 1 or path > 6):
+            print("\n[Error]: Ingrese un valor valido")
             continue
-    output.write("[BUSQUEDA] Ext: "+l_e[num-1]+", Ruta: "+l_p[location-1]+"\n")
+
+    # 4. Se crean los archivos de salida (output) y resumen (summary)
+    output_name = 'output-'+day_timef+'.txt'
+    output = open(output_name, "w", encoding='utf-8')
+    summary_name = "summary-"+day_timef+".txt"
+    summary = open(summary_name, "w", encoding='utf-8')
+
+    # 5. El programa escribe en el output la información sobre la busqueda
+    l_paths = ["Descargas", "Escritorio", "Documentos", "Descargas, Escritorio y Documentos", "Disco C:", "Ruta personalizada"]
+    output.write("[BUSQUEDA] Ext: "+l_exts[ext-1]+", Ruta: "+l_paths[path-1]+"\n")
+
+    # 6. 
     try:
         print("\nEn proceso... espere por favor")
         if(location > 0 and location < 7 and location != 4):
-            if (num > 0 and num < 5):
-                file_mapping(l_extensiones[num-1], num, location)
-            elif num == 5:
+            if (ext > 0 and ext < 5):
+                file_mapping(l_extensiones[ext-1], ext, location)
+            elif ext == 5:
                 it = 0
                 for e in l_extensiones:
                     it += 1
