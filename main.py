@@ -9,6 +9,8 @@ l_exts = ['.csv','.xlsx','.xls','.txt','Todas las anteriores']  #Lista con las e
 l_searchWords = []                                              #Lista de palabras clave a buscar
 l_sumFiles = []                                                 #Lista de todos los archivos para el resumen
 
+var_only_head = 1
+
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
 # Esta función crea el archivo output que muestra todos los archivos encontrados según la busqueda y que palabras contiene cada uno de estos
@@ -18,26 +20,33 @@ def file_mapping(ext, path, output):
     user_path = ''.join([str(elem) for elem in l_path])
     folder_path = ['Downloads/**/*', 'Desktop/**/*', 'Documents/**/*', '.','C:/**/*']
     paths = []
-    if(ext == 5):
-        if(path != 4):
-            for i in range(4):
-                tmp_path = user_path + folder_path[path-1] + l_exts[i]
-                paths.append(tmp_path)
-        else:
-            for i in range(4):
-                for j in range(3):
-                    tmp_path = user_path + folder_path[j] + l_exts[i]
-                    paths.append(tmp_path)  
+      
     str_ext = l_exts[ext-1]
     if(path < 6 and path != 4):
         full_path = user_path + folder_path[path-1] + str_ext
         paths.append(full_path)
     elif(path == 6):
-        custom_path = input('\nIngrese la ruta del directorio en el que desea buscar (debe terminar en \'/\' y no debe llevar \'\\\'): ')
+        custom_path = input('\nIngrese la ruta del directorio en el que desea buscar (copie y pegue la ruta tal cual la copia el explorador): ')
         output.write("Busqueda en ruta: " + custom_path + "\n")
         # summary.write("Busqueda en ruta: " + custom_path + "\n")
-        full_path = custom_path + '**/*' + str_ext
-        paths.append(full_path)
+        mid_path = custom_path + '/**/*'
+        if(ext != 5):
+            full_path = custom_path + '/**/*' + str_ext
+            paths.append(full_path)
+        else:
+            for i in range(4):
+                tmp_path = mid_path + l_exts[i]
+                paths.append(tmp_path)
+    if(ext == 5):
+        if(path != 4 and path != 6):
+            for i in range(4):
+                tmp_path = user_path + folder_path[path-1] + l_exts[i]
+                paths.append(tmp_path)
+        elif(path == 4):
+            for i in range(4):
+                for j in range(3):
+                    tmp_path = user_path + folder_path[j] + l_exts[i]
+                    paths.append(tmp_path)
 
     print("\nPrograma en ejecución, espere un momento por favor...\n")
 
@@ -139,24 +148,36 @@ def create_summary(summary):
 # Las siguientes 4 funciones se encargan de buscar una palabra en un archivo en específico, dependiendo del tipo de archivo se debe usar una función
 def search_csv(csvName, word):
     try:
-        df = pd.read_csv(csvName, sep=';')
+        df = pd.read_csv(csvName, sep=',')
     except Exception:
         return -1
-    count = len(re.findall(word, df.to_string().upper()))
+    if(var_only_head != 0):
+        df_head = df.head(3)
+        count = len(re.findall(word, df_head.to_string().upper()))
+    else:
+        count = len(re.findall(word, df.to_string().upper()))
     return count
 def search_excel(excelName, word):
     try:
         df = pd.read_excel(excelName)
     except Exception:
         return -1   
-    count = len(re.findall(word, df.to_string().upper()))
+    if(var_only_head != 0):
+        df_head = df.head(3)
+        count = len(re.findall(word, df_head.to_string().upper()))
+    else:
+        count = len(re.findall(word, df.to_string().upper()))
     return count
 def search_xls(excelName, word):
     try:
         df = pd.read_excel(excelName, engine='xlrd')
     except Exception:
         return -1
-    count = len(re.findall(word, df.to_string().upper()))
+    if(var_only_head != 0):
+        df_head = df.head(3)
+        count = len(re.findall(word, df_head.to_string().upper()))
+    else:
+        count = len(re.findall(word, df.to_string().upper()))
     return count
 def search_txt(txtName, word):
     try:
@@ -175,7 +196,7 @@ def search_txt(txtName, word):
 def load_words():
     txtWords = open('search_words.txt')
     lines = txtWords.readlines()
-    print("Se buscarán " + str(len(lines)) + "palabras del archivo de texto\'search_words.txt\'")
+    print("Se buscarán " + str(len(lines)) + " palabras del archivo de texto\'search_words.txt\'")
     if(len(lines) == 0):
         return -1
     for line in lines:
@@ -210,6 +231,9 @@ def main():
         if(path < 1 or path > 6):
             print("\n[Error]: Ingrese un valor valido")
             continue
+    
+    # var_tmp = input('\nIngrese \'1\' si desea buscar solamente en las primeras 3 filas de cada archivo, o ingrese \'0\' si desea realizar la busqueda completa\n')
+    # var_only_head = str(var_tmp)
 
     # 4. Se crean los archivos de salida (output) y resumen (summary)
     now = datetime.now()
