@@ -13,6 +13,7 @@ l_sumFiles = []                                                 #Lista de todos 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
 def file_mapping(ext, path, output):
+    # 7. Arma las 'rutas' que se le va a pasar a la función que busca los archivos
     l_path = ['C:/Users/', os.getlogin(),'/']
     user_path = ''.join([str(elem) for elem in l_path])
     folder_path = ['Downloads/**/*', 'Desktop/**/*', 'Documents/**/*', '.','C:/**/*']
@@ -37,18 +38,25 @@ def file_mapping(ext, path, output):
         # summary.write("Busqueda en ruta: " + custom_path + "\n")
         full_path = custom_path + '**/*' + str_ext
         paths.append(full_path)
-  
+
+    print("\nPrograma en ejecución, espere un momento por favor...\n")
+
+    # 8. Comienza a recorrer la lista de 'rutas' a la que va a buscar, si solamente es una, pues igual recorre la lista de 1 solo elemento
     for p in paths:
+        # 9. Con la función glob.glob busca según la extensión dada, los archivos en la ruta dada, estas rutas quedan guardadas en la lista llamada 'search'
         try:
             search = glob.glob(p, recursive=True)
         except Exception as e:
             print('[ERROR]: Ruta no valida. ' + e)
-        output.write('\n\n' + ('-'*100) + '\n\n\n')
+        output.write('\n\n' + ('-'*100) + '\nBusqueda: ' + p + '\n\n')
         # output.write('\n' + str(len(search)) + ' archivos encontrados con extensión \'' + str_ext + '\'\n\n')
+
+        # 10. Comienza a recorrer la lista con los nombres de los archivos, y verifica en que extensión termina para llamar el metodo correspondiente
         for file_name in search:
             if('search_words.txt' in file_name):
                 continue
-            output.write('- ' + file_name + '\n')    
+            output.write('- ' + file_name + '\n')   
+            # 11. Va escribiendo en el archivo de output cuantas veces se repite cada palabra 
             try:
                 if(file_name.endswith('.csv')):
                     for w in l_searchWords:
@@ -84,44 +92,46 @@ def file_mapping(ext, path, output):
                     output.write('\n')
             except Exception as e:
                 print('\nNo fue posible leer el archivo: ' + file_name + 'Error: ' + e)
+        
+        # 12. Para no repetir los glob.glob, los resultados de cada lista se van agregando a una lista para posteriormente ser usados en la creación del resumen 
         l_sumFiles.extend(search)
     
 
-# def create_summary():
-#     summary.write("RESUMEN BUSQUEDA: ")
-#     for w in l_searchWords:
-#         summary.write("\n\nLa palabra " + w.upper() + " se encuentra en los siguientes archivos:\n")
-#         for fileName in l_sumFiles:
-#             if(fileName == 'search_words.txt'):
-#                 continue
-#             if fileName.endswith('.csv'):
-#                 try:
-#                     search = search_csv(fileName, w.upper(), 0)
-#                     if(search > 0):
-#                         summary.write(' - ' + fileName + '\n')
-#                 except Exception as e:
-#                     print('\n[Error]: search_csv falló. ' + e)
-#             elif fileName.endswith('.xlsx'):
-#                 try:
-#                     search = search_excel(fileName, w.upper(), 0)
-#                     if(search > 0):
-#                         summary.write(' - ' + fileName + '\n')
-#                 except Exception as e:
-#                     print('\n[Error]: search_xlsx falló. ' + e)
-#             elif fileName.endswith('.xls'):
-#                 try:
-#                     search = search_xls(fileName, w.upper(), 0)
-#                     if(search > 0):
-#                         summary.write(' - ' + fileName + '\n')
-#                 except Exception as e:
-#                     print('\n[Error]: search_xls falló. ' + e)
-#             elif fileName.endswith('.txt'):
-#                 try:
-#                     search = search_txt(fileName, w.upper(), 0)
-#                     if(search > 0):
-#                         summary.write(' - ' + fileName + '\n')
-#                 except Exception as e:
-#                     print('\n[Error]: search_txt falló. ' + e)
+def create_summary(summary):
+    summary.write("RESUMEN BUSQUEDA: ")
+    for w in l_searchWords:
+        summary.write("\n\nLa palabra " + w.upper() + " se encuentra en los siguientes archivos:\n")
+        for fileName in l_sumFiles:
+            if(fileName.endswith('search_words.txt')):
+                continue
+            if fileName.endswith('.csv'):
+                try:
+                    search = search_csv(fileName, w.upper())
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
+                except Exception as e:
+                    print('\n[Error]: search_csv falló. ' + e)
+            elif fileName.endswith('.xlsx'):
+                try:
+                    search = search_excel(fileName, w.upper())
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
+                except Exception as e:
+                    print('\n[Error]: search_xlsx falló. ' + e)
+            elif fileName.endswith('.xls'):
+                try:
+                    search = search_xls(fileName, w.upper())
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
+                except Exception as e:
+                    print('\n[Error]: search_xls falló. ' + e)
+            elif fileName.endswith('.txt'):
+                try:
+                    search = search_txt(fileName, w.upper())
+                    if(search > 0):
+                        summary.write(' - ' + fileName + '\n')
+                except Exception as e:
+                    print('\n[Error]: search_txt falló. ' + e)
 
 def search_csv(csvName, word):
     try:
@@ -160,7 +170,7 @@ def search_txt(txtName, word):
 def load_words():
     txtWords = open('search_words.txt')
     lines = txtWords.readlines()
-    print(len(lines))
+    print("Se buscarán " + str(len(lines)) + "palabras del archivo de texto\'search_words.txt\'")
     if(len(lines) == 0):
         return -1
     for line in lines:
@@ -201,8 +211,8 @@ def main():
     day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
     output_name = 'outputs/output-'+day_timef+'.txt'
     output = open(output_name, "w", encoding='utf-8')
-    # summary_name = "summary-"+day_timef+".txt"
-    # summary = open(summary_name, "w", encoding='utf-8')
+    summary_name = "summaries/summary-"+day_timef+".txt"
+    summary = open(summary_name, "w", encoding='utf-8')
 
     # 5. El programa escribe en el output la información sobre la busqueda
     l_paths = ["Descargas", "Escritorio", "Documentos", "Descargas, Escritorio y Documentos", "Disco C:", "Ruta personalizada"]
@@ -210,16 +220,15 @@ def main():
 
     # 6. Inicia la busqueda de las palabras en los archivos
     try:
-        print("\nPrograma en ejecución, espere un momento por favor...\n")
         file_mapping(ext, path, output)       
     except Exception as e:
         print('\n[Error]: file_mapping() falló. {}'.format(e))
     
-    # try:
-    #     create_summary()
-    # except Exception as e:
-    #     print('\n[ERROR]: create_summary() falló. {}'.format(e))
+    try:
+        create_summary(summary)
+    except Exception as e:
+        print('\n[ERROR]: create_summary() falló. {}'.format(e))
     output.close()
-    # summary.close()
+    summary.close()
 main()
-print('FIN DEL PROGRAMA')
+print('\nFIN DEL PROGRAMA')
