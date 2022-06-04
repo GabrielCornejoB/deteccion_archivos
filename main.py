@@ -4,6 +4,7 @@ import re                                                       #Regular express
 import os                                                       #Llamados al sistema
 import warnings                                                 #Ignorar warnings de excels con reglas de formato
 from datetime import datetime                                   #Para nombre archivo
+import time
 
 l_exts = ['.csv','.xlsx','.xls','.txt','Todas las anteriores']  #Lista con las extensiones de los archivos a buscar
 l_searchWords = []                                              #Lista de palabras clave a buscar
@@ -22,8 +23,11 @@ def file_mapping(ext, path, output):
     paths = []
       
     str_ext = l_exts[ext-1]
-    if(path < 6 and path != 4):
+    if(path < 4):
         full_path = user_path + folder_path[path-1] + str_ext
+        paths.append(full_path)
+    elif(path == 5):
+        full_path = folder_path[path-1] + str_ext
         paths.append(full_path)
     elif(path == 6):
         custom_path = input('\nIngrese la ruta del directorio en el que desea buscar (copie y pegue la ruta tal cual la copia el explorador): ')
@@ -38,9 +42,13 @@ def file_mapping(ext, path, output):
                 tmp_path = mid_path + l_exts[i]
                 paths.append(tmp_path)
     if(ext == 5):
-        if(path != 4 and path != 6):
+        if(path < 4):
             for i in range(4):
                 tmp_path = user_path + folder_path[path-1] + l_exts[i]
+                paths.append(tmp_path)
+        elif(path == 5):
+            for i in range(4):
+                tmp_path = folder_path[path-1] + l_exts[i]
                 paths.append(tmp_path)
         elif(path == 4):
             for i in range(4):
@@ -238,6 +246,7 @@ def main():
     # 4. Se crean los archivos de salida (output) y resumen (summary)
     now = datetime.now()
     day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
+    start_time = time.time()
     output_name = 'outputs/output-'+day_timef+'.txt'
     output = open(output_name, "w", encoding='utf-8')
     summary_name = "summaries/summary-"+day_timef+".txt"
@@ -259,5 +268,7 @@ def main():
         print('\n[ERROR]: create_summary() falló. {}'.format(e))
     output.close()
     summary.close()
+
+    print("\nTiempo de ejecución: {0:5f} segundos".format(time.time() - start_time))
 main()
-print('\nFIN DEL PROGRAMA')
+print('\nFIN DEL PROGRAMA\n')
