@@ -1,5 +1,4 @@
-import glob
-from numpy import full                                                     #Recorrer achivos
+import glob                                                     #Recorrer achivos
 import pandas as pd                                             #Dataframes
 import re                                                       #Regular expressions
 import os                                                       #Llamados al sistema
@@ -12,6 +11,7 @@ l_sumFiles = []                                                 #Lista de todos 
 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
+# Esta función crea el archivo output que muestra todos los archivos encontrados según la busqueda y que palabras contiene cada uno de estos
 def file_mapping(ext, path, output):
     # 7. Arma las 'rutas' que se le va a pasar a la función que busca los archivos
     l_path = ['C:/Users/', os.getlogin(),'/']
@@ -49,7 +49,6 @@ def file_mapping(ext, path, output):
         except Exception as e:
             print('[ERROR]: Ruta no valida. ' + e)
         output.write('\n\n' + ('-'*100) + '\nBusqueda: ' + p + '\n\n')
-        # output.write('\n' + str(len(search)) + ' archivos encontrados con extensión \'' + str_ext + '\'\n\n')
 
         # 10. Comienza a recorrer la lista con los nombres de los archivos, y verifica en que extensión termina para llamar el metodo correspondiente
         for file_name in search:
@@ -96,11 +95,15 @@ def file_mapping(ext, path, output):
         # 12. Para no repetir los glob.glob, los resultados de cada lista se van agregando a una lista para posteriormente ser usados en la creación del resumen 
         l_sumFiles.extend(search)
     
-
+# Esta función crea el archivo summary, en el que muestra cada palabra y en que archivos se encuentra la misma
 def create_summary(summary):
     summary.write("RESUMEN BUSQUEDA: ")
+
+    # 13. Recorre la lista de palabras
     for w in l_searchWords:
         summary.write("\n\nLa palabra " + w.upper() + " se encuentra en los siguientes archivos:\n")
+
+        # 14. Por cada palabra, recorre la lista de todos los glob.glob, y si la palabra está al menos una vez en el archivo, se agrega el archivo
         for fileName in l_sumFiles:
             if(fileName.endswith('search_words.txt')):
                 continue
@@ -133,6 +136,7 @@ def create_summary(summary):
                 except Exception as e:
                     print('\n[Error]: search_txt falló. ' + e)
 
+# Las siguientes 4 funciones se encargan de buscar una palabra en un archivo en específico, dependiendo del tipo de archivo se debe usar una función
 def search_csv(csvName, word):
     try:
         df = pd.read_csv(csvName, sep=';')
@@ -167,6 +171,7 @@ def search_txt(txtName, word):
             count += times
     return count
 
+# Esta función se encarga de cargas las palabras del archivo de texto
 def load_words():
     txtWords = open('search_words.txt')
     lines = txtWords.readlines()
