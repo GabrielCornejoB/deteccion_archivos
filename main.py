@@ -14,7 +14,6 @@ def search_words(path, word, l_s):
     for e in l_exts:
         tmp_path =  path + '/**/*' + e
         files.extend(glob.glob(tmp_path, recursive=True))
-
     l_s.append("La palabra " + word.upper() + " se encuentra en los siguientes archivos:")
         
     for filename in files:
@@ -79,15 +78,13 @@ def search_txt(txtName, word):
 def start_search(word, path):
     # Lista donde se adicionaran las distintas cadenas, esta luego será retornada
     l_return_str = []
-        
-    # # Revisa si si se pasaron los argumentos necesarios para poder ejecutar el programa
-    # if(len(sys.argv) != 3):
-    #     print('\n[Error]: No se ingresaron los parametros previos en el llamado de la función. La función se debe llamar así: \'py main.py (palabra) (ruta)\'')
-    #     return
-
-    # Se comienza a realizar el resultado de la busqueda
+    # Mensaje de inicio para que el servidor sepa cuando se debe crear un archivo de output nuevo
     l_return_str.append('[START]')
+    # Indica en el output, la busqueda que se realizó para recibir ese resultado
     l_return_str.append("BUSQUEDA: Ruta: " + path + " Palabra: " + word + '\n')
+    # Busca según la ruta y la palabra entregada, en proceso la busqueda de varias palabras
     search_words(path, word, l_return_str)
+    # Mensaje de fin para que el servidor sepa cuando debe cerrar el archivo de output
     l_return_str.append('[END]')
+    # Retorna la lista con el output del programa
     return l_return_str

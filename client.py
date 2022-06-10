@@ -3,8 +3,10 @@ import threading
 import sys
 import main as search
 
+# Variable de salida para los hilos
 end = False
 
+# Validaciones previas para la conexión con el servidor
 s = socket.socket()
 if(len(sys.argv) == 2):
     try:
@@ -17,6 +19,7 @@ else:
     end = True
     print("Debe ingresar la dirección IP del server")
 
+# Hilo que recibe los mensajes del servidor
 def thread_recv():
     try:
         while True:

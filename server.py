@@ -17,10 +17,13 @@ print('Socket asociado al puerto ' + str(port))
 s.listen(5)
 print("Socket está escuchando peticiones")
 
+# lista de conexiones activas en ese momento (Aún no se si dejarlo para que reciba varias o solo una conexión a la vez)
 l_cons = []
 
+# Variable de salida para los hilos del programa, temporal, seguramente será cambiada más adelante
 end = False
 
+# Hilo que recibe los mensajes del cliente
 def thread_recv(con,addr):
     try:
         while True:
@@ -48,7 +51,7 @@ def thread_recv(con,addr):
     except:
         print("Hilo \'recv()\' finalizó")
 
-# Creo que no hace falta un hilo pq solo quiero que sea una conexión
+# Hilo que acepta multiples conexiones, como dicho arriba, no estoy seguro si dejar solo un cliente a la vez o multiples
 def thread_accept():
     try:
         while True:
@@ -67,6 +70,7 @@ thread_a = threading.Thread(target=thread_accept)
 thread_a.daemon = True
 thread_a.start()
 
+# Ciclo de input
 while True:
     msg = input()
     if(msg.lower() == 'exit'):
@@ -77,7 +81,9 @@ while True:
             c.send(msg.encode())
     else:
         print("No hay conexiones activas")
-    
+
+# Se cierran las conexiones activas 
 for con in l_cons:
     con.close()
+
 s.close()
