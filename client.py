@@ -28,6 +28,7 @@ def thread_recv():
             if(ans.lower().startswith("search")):
                 tokens = ans.split()
                 if(len(tokens) == 3):
+                    print("Realizando consulta...")
                     l_output = search.start_search(tokens[1], tokens[2])
                     for line in l_output:
                         s.send(line.encode())

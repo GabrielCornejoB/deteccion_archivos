@@ -43,7 +43,7 @@ def thread_recv(con,addr):
                 if(msg.startswith('[START]')):
                     now = datetime.now()
                     day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
-                    output_name = 'outputs/output-'+day_timef+'.txt'
+                    output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'
                     output = open(output_name, "w", encoding='utf-8')
                     print("Creando output...")              
                 elif(msg.startswith('[END]')):     
