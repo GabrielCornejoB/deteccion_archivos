@@ -9,7 +9,8 @@ l_sumFiles = []                                                 #Lista de todos 
 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
-def search_words(path, word, l_s):
+def search_words(path, word):
+    l_s = []
     files = []
     for e in l_exts:
         tmp_path =  path + '/**/*' + e
@@ -83,7 +84,7 @@ def start_search(word, path):
     # Indica en el output, la busqueda que se realizó para recibir ese resultado
     l_return_str.append("BUSQUEDA: Ruta: " + path + " Palabra: " + word + '\n')
     # Busca según la ruta y la palabra entregada, en proceso la busqueda de varias palabras
-    search_words(path, word, l_return_str)
+    l_return_str.extend(search_words(path, word))
     # Mensaje de fin para que el servidor sepa cuando debe cerrar el archivo de output
     l_return_str.append('[END]')
     # Retorna la lista con el output del programa
