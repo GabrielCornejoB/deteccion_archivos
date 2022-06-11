@@ -40,18 +40,17 @@ def thread_recv(con,addr):
             if(msg.startswith('[error]')):
                 pass
             else:
-                print(msg)
-                # if(msg.startswith('[START]')):
-                #     now = datetime.now()
-                #     day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
-                #     output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'
-                #     output = open(output_name, "w", encoding='utf-8')
-                #     print("Creando output...")              
-                # elif(msg.startswith('[END]')):     
-                #     output.close()
-                #     print("Output creado exitosamente")
-                # else:
-                #     output.write(msg + '\n')
+                if(msg.startswith('[START]')):
+                    now = datetime.now()
+                    day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
+                    output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'
+                    output = open(output_name, "w", encoding='utf-8')
+                    print("Creando output...")              
+                elif(msg.startswith('[END]')):     
+                    output.close()
+                    print("Output creado exitosamente")
+                else:
+                    output.write(msg + '\n')
             if end is True:
                 break
     except:
