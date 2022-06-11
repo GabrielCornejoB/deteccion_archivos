@@ -27,18 +27,26 @@ Para utilizar el programa primero se tiene que ejecutar **server.py** en el disp
 
     py server.py
 
-Una vez ejecutamos esto podemos ver el puerto que está utilizando el servidor y la dirección IPv4 privada del mismo, esta la necesitaremos para un paso más adelante.
+Una vez ejecutamos esto podemos ver el puerto que está utilizando el servidor y la dirección IPv4 privada del mismo, esta la necesitaremos más adelante.
 
-Luego en otro dispositivo (o incluso en el mismo es posible) se ejecuta **client.py**, para poder ejecutarlo debemos de colocar la dirección IP privada del dispositivo que hará de server. 
+Lo siguiente sería cambiarnos al dispositivo donde deseamos buscar los archivos, este es el agente/cliente. En este dispositivo debemos ejecutar la clase **client.py**, y el comando para ejecutarla es el siguiente:
 
-Para conocer la dirección IP, abrimos el **Simbolo del Sistema** en el dispositivo que hará de server y ejecutamos el comando
+    py client.py (dirección IP del server)
 
-    ipconfig /all
+Si realizamos bien lo anterior, el cliente se conectará al servidor y se confirmará en ambas partes que se estableció conexión.
 
-Bajamos a las ultimas líneas y copiamos la dirección IP donde dice **"Dirección IPv4"**
+Lo siguiente sería realizar las consultas desde el dispositivo que hace de servidor, el comando actualmente es el siguiente:
 
-Ahora si, para ejecutar **client.py**, debemos de digitar el siguiente comando:
+    search (palabra a buscar) (ruta donde buscar)
 
-    py client.py (dirección IP server)
+De momento está funcionando solo con una palabra pero ya está en proceso la opción de leer por archivo de texto.
 
-Una vez logrado eso, se establecerá la conexión entre los dos dispositivos
+Despues de realizar esta consulta el cliente la procesará, despues de un momento mandará un mensaje de que ya finalizó y el servidor generará un archivo de texto con el resultado de la consulta. En esta se ve en que archivos se encuentra la palabra buscada.
+
+Luego en el servidor podemos escribir el comando:
+
+    exit
+
+Para cerrar ambos, tanto el cliente como el servidor, en caso tal de que no cierre correctamente se puede forzar la ejecución de un programa con 
+
+    ctrl + C
