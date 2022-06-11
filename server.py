@@ -13,6 +13,11 @@ port = 12345
 s.bind(('', port))
 print('Socket asociado al puerto ' + str(port))
 
+# Se muestra la dirección IP del server
+hostname = socket.gethostname()
+ip = socket.gethostbyname(hostname)
+print("IP del servidor: " + str(ip))
+
 # Socket escucha hasta 5 peticiones
 s.listen(5)
 print("Socket está escuchando peticiones")
