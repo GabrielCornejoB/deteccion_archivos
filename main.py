@@ -35,6 +35,8 @@ def search_words(path, word):
             search = search_txt(filename, word.upper())
             if(search > 0):
                 l_return_str.append(' - ' + filename)
+    # Mensaje de fin para que el servidor sepa cuando debe cerrar el archivo de output
+    l_return_str.append('[END]')
 
 def search_csv(csvName, word):
     try:
@@ -84,7 +86,5 @@ def start_search(word, path):
     l_return_str.append("BUSQUEDA: Ruta: " + path + " Palabra: " + word + '\n')
     # Busca según la ruta y la palabra entregada, en proceso la busqueda de varias palabras
     search_words(path, word)
-    # Mensaje de fin para que el servidor sepa cuando debe cerrar el archivo de output
-    l_return_str.append('[END]')
     # Retorna la lista con el output del programa
     return l_return_str

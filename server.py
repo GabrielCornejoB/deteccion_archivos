@@ -51,6 +51,7 @@ def thread_recv(con,addr):
                     print("Output creado exitosamente")
                 else:
                     output.write(msg + '\n')
+                    print("from client: " + msg)
             if end is True:
                 break
     except:
