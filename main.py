@@ -77,6 +77,7 @@ def search_txt(txtName, word):
     return count
 
 def start_search(word, path):  
+    l_return.clear()
     # Indica en el output, la busqueda que se realizó para recibir ese resultado
     l_return.append("BUSQUEDA: Ruta: " + path + " Palabra: " + word)
     # Busca según la ruta y la palabra entregada, en proceso la busqueda de varias palabras
