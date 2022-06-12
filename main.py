@@ -78,8 +78,7 @@ def search_txt(txtName, word):
             count += times
     return count
 
-def start_search(word, path):
-    
+def start_search(word, path):  
     # Mensaje de inicio para que el servidor sepa cuando se debe crear un archivo de output nuevo
     l_return_str.append('[START]')
     # Indica en el output, la busqueda que se realizó para recibir ese resultado

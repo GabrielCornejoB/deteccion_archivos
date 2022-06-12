@@ -30,6 +30,7 @@ def thread_recv():
                 if(len(tokens) == 3):
                     print("Realizando consulta...")
                     l_output = search.start_search(tokens[1], tokens[2])
+                    print(len(l_output))
                     for line in l_output:
                         s.send(line.encode())
                     print("Consulta finalizada y enviada al servidor")
