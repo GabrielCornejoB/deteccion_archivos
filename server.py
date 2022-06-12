@@ -32,26 +32,18 @@ end = False
 def thread_recv(con,addr):
     try:
         while True:
-            try:
-                msg = con.recv(1024).decode()     
-            except Exception as e:
-                print("[Error]: No se pudo recibir el mensaje: " + e)   
-                l_cons.remove(con) 
+            msg = con.recv(1024).decode()            
             if(msg.startswith('[error]')):
                 pass
             else:
-                if(msg.startswith('[START]')):
-                    now = datetime.now()
-                    day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
-                    output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'
-                    output = open(output_name, "w", encoding='utf-8')
-                    print("Creando output...")              
-                elif(msg.startswith('[END]')):     
-                    output.close()
-                    print("Output creado exitosamente")
-                else:
-                    output.write(msg + '\n')
-                    print("from client: " + msg)
+                now = datetime.now()
+                day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
+                output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'   
+                output = open(output_name, "w", encoding='utf-8')           
+                print("Creando output...")
+                output.write(msg)
+                output.close()
+                print("Output creado exitosamente")                
             if end is True:
                 break
     except:

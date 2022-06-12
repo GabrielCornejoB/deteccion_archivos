@@ -29,9 +29,8 @@ def thread_recv():
                 tokens = ans.split()
                 if(len(tokens) == 3):
                     print("Realizando consulta...")
-                    l_output = search.start_search(tokens[1], tokens[2])
-                    for line in l_output:
-                        s.send(line.encode())
+                    output_msg = search.start_search(tokens[1], tokens[2])
+                    s.send(output_msg.encode())
                     print("Consulta finalizada y enviada al servidor")
                 else:
                     s.send("Función incompleta. Debe escribirse así: \'search (palabra) (ruta)\'".encode())
