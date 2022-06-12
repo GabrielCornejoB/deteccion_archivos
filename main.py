@@ -12,7 +12,6 @@ l_return_str = []
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
 def search_words(path, word):
-    l_return_str = []
     files = []
     for e in l_exts:
         tmp_path =  path + '/**/*' + e
@@ -36,7 +35,6 @@ def search_words(path, word):
             search = search_txt(filename, word.upper())
             if(search > 0):
                 l_return_str.append(' - ' + filename)
-    # return l_s
 
 def search_csv(csvName, word):
     try:
