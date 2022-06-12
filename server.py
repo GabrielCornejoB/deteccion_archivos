@@ -32,7 +32,7 @@ end = False
 def thread_recv(con,addr):
     try:
         while True:
-            msg = con.recv(1024).decode()            
+            msg = con.recv(10240).decode()            
             if(msg.startswith('[error]')):
                 pass
             else:
@@ -41,6 +41,7 @@ def thread_recv(con,addr):
                 output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'   
                 output = open(output_name, "w", encoding='utf-8')           
                 print("Creando output...")
+                print(msg)
                 output.write(msg)
                 output.close()
                 print("Output creado exitosamente")                
