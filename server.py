@@ -58,7 +58,7 @@ def thread_accept():
             print("Conexión establecida con: " + str(address))
             l_cons.append(con)
             thread_r = threading.Thread(target=thread_recv, args=(con,address))
-            thread_r.daemon = True
+            # thread_r.daemon = True
             thread_r.start()
             if end is True:
                 break
@@ -66,7 +66,7 @@ def thread_accept():
         print("Hilo \'accept()\' finalizó")
 
 thread_a = threading.Thread(target=thread_accept)
-thread_a.daemon = True
+# thread_a.daemon = True
 thread_a.start()
 
 # Ciclo de input
