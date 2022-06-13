@@ -34,8 +34,8 @@ def thread_recv(con,addr):
         while True:
             msg = con.recv(10240).decode()            
             if(msg.startswith('[error]')):
-                pass
-            else:
+                print(msg)
+            elif(msg.startswith('[BUSQUEDA]')):
                 now = datetime.now()
                 day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
                 output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'   
@@ -58,7 +58,7 @@ def thread_accept():
             print("Conexión establecida con: " + str(address))
             l_cons.append(con)
             thread_r = threading.Thread(target=thread_recv, args=(con,address))
-            # thread_r.daemon = True
+            thread_r.daemon = True
             thread_r.start()
             if end is True:
                 break

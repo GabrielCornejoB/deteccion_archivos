@@ -19,6 +19,10 @@ else:
     end = True
     print("Debe ingresar la dirección IP del server")
 
+# sw = open("search_words.txt", "w", encoding="utf-8")
+# sw.close()
+sw = []
+
 # Hilo que recibe los mensajes del servidor
 def thread_recv():
     try:
@@ -27,13 +31,21 @@ def thread_recv():
             print("from server: " + ans)   
             if(ans.lower().startswith("search")):
                 tokens = ans.split()
-                if(len(tokens) == 3):
+                if(len(tokens) == 2):
                     print("Realizando consulta...")
-                    output_msg = search.start_search(tokens[1], tokens[2])
+                    output_msg = search.start_search(sw, tokens[1])
                     s.send(output_msg.encode())
                     print("Consulta finalizada y enviada al servidor")
                 else:
-                    s.send("Función incompleta. Debe escribirse así: \'search (palabra) (ruta)\'".encode())
+                    s.send("[error] Función incompleta. Debe escribirse así: \'search (palabra) (ruta)\'".encode())
+            elif(ans.lower().startswith("add")):
+                tokens = ans.split()
+                if(len(tokens) > 1):
+                    for t in tokens[1:]:
+                        sw.append(t)
+                    print("Search words: \n{}".format(sw))
+                else:
+                    s.send("[error] Función incompleta. Debe agregar al menos 1 argumento".encode())
     except:
         print("Finalizó la conexión con el server")
         s.close()

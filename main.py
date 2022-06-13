@@ -12,30 +12,31 @@ l_return = []
 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
 
-def search_words(path, word):
+def search_words(path, words):
     files = []
     for e in l_exts:
         tmp_path =  path + '/**/*' + e
         files.extend(glob.glob(tmp_path, recursive=True))
-    l_return.append("La palabra " + word.upper() + " se encuentra en los siguientes archivos:")
-        
-    for filename in files:
-        if(filename.lower().endswith(".csv")):
-            search = search_csv(filename, word.upper())
-            if(search > 0):
-                l_return.append(' - ' + filename)
-        elif(filename.lower().endswith(".xlsx")):
-            search = search_xlsx(filename, word.upper())
-            if(search > 0):
-                l_return.append(' - ' + filename)
-        elif(filename.lower().endswith(".xls")):
-            search = search_xls(filename, word.upper())
-            if(search > 0):
-                l_return.append(' - ' + filename)
-        elif(filename.lower().endswith(".txt")):
-            search = search_txt(filename, word.upper())
-            if(search > 0):
-                l_return.append(' - ' + filename)
+
+    for word in words:
+        l_return.append("\nLa palabra " + word.upper() + " se encuentra en los siguientes archivos:")
+        for filename in files:
+            if(filename.lower().endswith(".csv")):
+                search = search_csv(filename, word.upper())
+                if(search > 0):
+                    l_return.append(' - ' + filename)
+            elif(filename.lower().endswith(".xlsx")):
+                search = search_xlsx(filename, word.upper())
+                if(search > 0):
+                    l_return.append(' - ' + filename)
+            elif(filename.lower().endswith(".xls")):
+                search = search_xls(filename, word.upper())
+                if(search > 0):
+                    l_return.append(' - ' + filename)
+            elif(filename.lower().endswith(".txt")):
+                search = search_txt(filename, word.upper())
+                if(search > 0):
+                    l_return.append(' - ' + filename)
 
 def search_csv(csvName, word):
     try:
@@ -77,12 +78,12 @@ def search_txt(txtName, word):
             count += times
     return count
 
-def start_search(word, path):  
+def start_search(words, path):  
     l_return.clear()
     # Indica en el output, la busqueda que se realizó para recibir ese resultado
-    l_return.append("BUSQUEDA: Ruta: " + path + " Palabra: " + word)
+    l_return.append("[BUSQUEDA]: Ruta: " + path + " Palabra(s): " + str(words))
     # Busca según la ruta y la palabra entregada, en proceso la busqueda de varias palabras
-    search_words(path, word)
+    search_words(path, words)
     # Junta los elementos de la lista en un string
     l_return_str = "\n".join([str(elem) for elem in l_return])
     # Retorna la string con el output del programa
@@ -90,3 +91,8 @@ def start_search(word, path):
 
 if(len(sys.argv) == 3):
     print(start_search(sys.argv[1], sys.argv[2]))
+elif(len(sys.argv) > 3):
+    tmp_l = []
+    for arg in range(1, len(sys.argv)-1):
+        tmp_l.append(arg)
+    print(start_search(tmp_l, sys.argv[-1]))
