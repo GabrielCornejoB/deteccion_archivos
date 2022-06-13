@@ -9,6 +9,8 @@ El paso a paso del programa sería algo así:
 4. El cliente procesa la consulta y devuelve el resultado al servidor
 5. El servidor genera un archivo de texto con el resultado de la consulta
 
+---
+
 ## **Requisitos prevíos**
 
 Para poder utilizar el programa se debe tener:
@@ -20,6 +22,8 @@ Para poder utilizar el programa se debe tener:
 Para instalar las librerías debemos tener pip y en la consola realizar el siguiente comando:
 
     pip install (nombre librería)
+
+---
 
 ## **Como usar el programa**
 
@@ -33,17 +37,29 @@ Lo siguiente sería cambiarnos al dispositivo donde deseamos buscar los archivos
 
     py client.py (dirección IP del server)
 
+---
+
 Si realizamos bien lo anterior, el cliente se conectará al servidor y se confirmará en ambas partes que se estableció conexión.
+
+Una vez iniciado el programa, tendremos que específicar que palabras deseamos buscar en los archivos, esto lo hacemos con el comando "add", con este comando podemos adicionar 1 o varias palabras al mismo tiempo, Si queremos agregar solo una lo escribimos así:
+
+    add (palabra)
+
+Pero si queremos colocar varias podemos usarlo de la siguiente manera:
+
+    add (palabra1) (palabra2) (palabra3)
+
+---
 
 Lo siguiente sería realizar las consultas desde el dispositivo que hace de servidor, el comando actualmente es el siguiente:
 
-    search (palabra a buscar) (ruta donde buscar)
-
-De momento está funcionando solo con una palabra pero ya está en proceso la opción de leer por archivo de texto.
+    search (ruta donde buscar)
 
 Despues de realizar esta consulta el cliente la procesará, despues de un momento mandará un mensaje de que ya finalizó y el servidor generará un archivo de texto con el resultado de la consulta. En esta se ve en que archivos se encuentra la palabra buscada.
 
-Luego en el servidor podemos escribir el comando:
+---
+
+Luego en el servidor si deseamos salir del prograa podemos escribir el comando:
 
     exit
 
