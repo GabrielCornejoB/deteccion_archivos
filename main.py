@@ -90,9 +90,11 @@ def start_search(words, path):
     return l_return_str
 
 if(len(sys.argv) == 3):
-    print(start_search(sys.argv[1], sys.argv[2]))
+    l = []
+    l.append(sys.argv[1])
+    print(start_search(l, sys.argv[2]))
 elif(len(sys.argv) > 3):
     tmp_l = []
-    for arg in range(1, len(sys.argv)-1):
-        tmp_l.append(arg)
+    for i in range(1, len(sys.argv)-1):
+        tmp_l.append(sys.argv[i])
     print(start_search(tmp_l, sys.argv[-1]))
