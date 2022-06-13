@@ -2,6 +2,7 @@ import glob                                                     #Recorrer achivo
 import pandas as pd                                             #Dataframes
 import re                                                       #Regular expressions
 import warnings                                                 #Ignorar warnings de excels con reglas de formato
+import sys
 
 l_exts = ['.csv','.xlsx','.xls','.txt']                         #Lista con las extensiones de los archivos a buscar
 l_searchWords = []                                              #Lista de palabras clave a buscar
@@ -86,3 +87,6 @@ def start_search(word, path):
     l_return_str = "\n".join([str(elem) for elem in l_return])
     # Retorna la string con el output del programa
     return l_return_str
+
+if(len(sys.argv) == 3):
+    print(start_search(sys.argv[1], sys.argv[2]))
