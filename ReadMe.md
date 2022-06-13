@@ -1,5 +1,5 @@
 # **Programa de detección de palabras en archivos**
-El siguiente programa tiene el fin de encontrar palabras clave en archivos (excel, csv y txt) de un dispositivo, inicialmente estuvo pensado para ser usado localmente pero en la versión actual está implementado como un cliente-servidor.
+El siguiente programa tiene el fin de encontrar palabras clave en los encabezados de archivos (excel, csv y txt) de un dispositivo, inicialmente estuvo pensado para ser usado localmente pero en la versión actual está implementado como un cliente-servidor.
 
 El paso a paso del programa sería algo así:
 
