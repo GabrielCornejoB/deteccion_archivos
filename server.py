@@ -26,6 +26,8 @@ print("Socket está escuchando peticiones")
 # lista de conexiones activas en ese momento (Aún no se si dejarlo para que reciba varias o solo una conexión a la vez)
 l_cons = []
 
+dict_ips = {}
+
 # Variable de salida para los hilos del programa, temporal, seguramente será cambiada más adelante
 end = False
 
@@ -33,7 +35,7 @@ end = False
 def thread_recv(con,addr):
     try:
         while True:
-            msg = con.recv(sys.maxsize-1).decode()            
+            msg = con.recv(102400).decode()            
             if(msg.startswith('[error]')):
                 print(msg)
             elif(msg.startswith('[BUSQUEDA]')):
@@ -58,6 +60,8 @@ def thread_accept():
             con, address = s.accept()                          
             print("Conexión establecida con: " + str(address))
             l_cons.append(con)
+            dict_ips[address[0]] = con
+            print(dict_ips)
             thread_r = threading.Thread(target=thread_recv, args=(con,address))
             thread_r.daemon = True
             thread_r.start()
