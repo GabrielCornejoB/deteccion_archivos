@@ -26,7 +26,7 @@ print("Socket está escuchando peticiones")
 # lista de conexiones activas en ese momento (Aún no se si dejarlo para que reciba varias o solo una conexión a la vez)
 l_cons = []
 
-dict_ips = {}
+l_ips = []
 
 # Variable de salida para los hilos del programa, temporal, seguramente será cambiada más adelante
 end = False
@@ -60,8 +60,10 @@ def thread_accept():
             con, address = s.accept()                          
             print("Conexión establecida con: " + str(address))
             l_cons.append(con)
-            dict_ips[address[0]] = con
-            print(dict_ips)
+            tmp_tup = (address[0], con)
+            l_ips.append(tmp_tup)
+            # dict_ips[address[0]] = con
+            print("Direcciones IP conectadas: {}".format([x[0] for x in l_ips]))
             thread_r = threading.Thread(target=thread_recv, args=(con,address))
             thread_r.daemon = True
             thread_r.start()
