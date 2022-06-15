@@ -1,6 +1,7 @@
 import socket
 import threading
 from datetime import datetime
+import sys
 
 # Creación socket
 s = socket.socket()
@@ -32,7 +33,7 @@ end = False
 def thread_recv(con,addr):
     try:
         while True:
-            msg = con.recv(10240).decode()            
+            msg = con.recv(sys.maxsize-1).decode()            
             if(msg.startswith('[error]')):
                 print(msg)
             elif(msg.startswith('[BUSQUEDA]')):

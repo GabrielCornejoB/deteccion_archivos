@@ -3,6 +3,7 @@ import pandas as pd                                             #Dataframes
 import re                                                       #Regular expressions
 import warnings                                                 #Ignorar warnings de excels con reglas de formato
 import sys
+from datetime import datetime
 
 l_exts = ['.csv','.xlsx','.xls','.txt']                         #Lista con las extensiones de los archivos a buscar
 l_searchWords = []                                              #Lista de palabras clave a buscar
@@ -89,12 +90,18 @@ def start_search(words, path):
     # Retorna la string con el output del programa
     return l_return_str
 
-if(len(sys.argv) == 3):
-    l = []
-    l.append(sys.argv[1])
-    print(start_search(l, sys.argv[2]))
-elif(len(sys.argv) > 3):
+# Si se quiere ejecutar localmente
+if(len(sys.argv) >= 3):
     tmp_l = []
     for i in range(1, len(sys.argv)-1):
         tmp_l.append(sys.argv[i])
-    print(start_search(tmp_l, sys.argv[-1]))
+    
+    now = datetime.now()
+    day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
+    output_name = 'outputs/output(local)-' + day_timef+ '.txt'   
+    output = open(output_name, "w", encoding='utf-8')
+
+    print("Busqueda en proceso...")
+    for s in start_search(tmp_l, sys.argv[-1]):
+        output.write(s)
+    print("Busqueda finalizada")
