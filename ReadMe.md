@@ -68,6 +68,8 @@ Lo siguiente sería realizar las consultas desde el dispositivo que hace de serv
 
     search ruta donde buscar
 
+NOTA: La ruta debe ser separada por '\' y no debe terminar en backslash, lo ideal es que sea copiada y pegada del explorados de archivos. Ej: C:\Users\usuario\Documents
+
 Despues de realizar esta consulta el cliente la procesará, despues de un momento mandará un mensaje de que ya finalizó y el servidor generará un archivo de texto con el resultado de la consulta. En esta se ve en que archivos se encuentra la palabra buscada.
 
 ---
@@ -99,3 +101,5 @@ Por otro lado, si queremos buscar varias palabras, sería de la siguiente manera
     py .\main.py palabra1 palabra2 palabra3 ruta
 
 Nota: El programa no esta limitado solamente a 3 palabras, se pueden buscar más, pero tener en cuenta que mientras más palabras sean más se va a demorar en ejecutar el programa
+
+NOTA: La ruta debe ser separada por '\' y no debe terminar en backslash, lo ideal es que sea copiada y pegada del explorados de archivos. Ej: C:\Users\usuario\Documents
