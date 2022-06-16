@@ -4,6 +4,7 @@ import re                                                       #Regular express
 import warnings                                                 #Ignorar warnings de excels con reglas de formato
 import sys
 from datetime import datetime
+import time
 
 l_exts = ['.csv','.xlsx','.xls','.txt']                         #Lista con las extensiones de los archivos a buscar
 l_searchWords = []                                              #Lista de palabras clave a buscar
@@ -100,8 +101,8 @@ if(len(sys.argv) >= 3):
     day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
     output_name = 'outputs/output(local)-' + day_timef+ '.txt'   
     output = open(output_name, "w", encoding='utf-8')
-
+    start_time = time.time()
     print("Busqueda en proceso...")
     for s in start_search(tmp_l, sys.argv[-1]):
         output.write(s)
-    print("Busqueda finalizada")
+    print("Busqueda finalizada. Tiempo de ejecución: {0:5f} segundos".format((time.time()-start_time)))
