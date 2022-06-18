@@ -3,89 +3,82 @@ import threading
 from datetime import datetime
 import sys
 
-# Creación socket
-s = socket.socket()
-print("Socket creado exitosamente por servidor")
+l_ips = []
 
-# Puerto reservado
-port = 12345
+def format_ip(l_ip):
+    if(len(l_ip) != 4):
+        print("Sintaxis de IP invalida")
+        return -1
+    for i in l_ip:
+        if(int(i) > 255):
+            print("Sintaxis de IP invalida, no debe superar 255")
+            return -1
 
-# Vinculación del puerto con el socket
-s.bind(('', port))
-print('Socket asociado al puerto ' + str(port))
-
-# Se muestra la dirección IP del server
-hostname = socket.gethostname()
-ip = socket.gethostbyname(hostname)
-print("IP del servidor: " + str(ip))
-
-# Socket escucha hasta 5 peticiones
-s.listen(5)
-print("Socket está escuchando peticiones")
-
-# lista de conexiones activas en ese momento (Aún no se si dejarlo para que reciba varias o solo una conexión a la vez)
-l_cons = []
-
-# Variable de salida para los hilos del programa, temporal, seguramente será cambiada más adelante
-end = False
-
-# Hilo que recibe los mensajes del cliente
-def thread_recv(con,addr):
-    try:
-        while True:
-            msg = con.recv(102400).decode()            
-            if(msg.startswith('[error]')):
-                print(msg)
-            elif(msg.startswith('[BUSQUEDA]')):
-                now = datetime.now()
-                day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
-                output_name = 'outputs/output'+ str(addr) + '-' +day_timef+'.txt'   
-                output = open(output_name, "w", encoding='utf-8')           
-                print("Creando output...")
-                print(msg)
-                output.write(msg)
-                output.close()
-                print("Output creado exitosamente")                
-            if end is True:
-                break
-    except:
-        print("Hilo \'recv()\' finalizó")
-
-# Hilo que acepta multiples conexiones, como dicho arriba, no estoy seguro si dejar solo un cliente a la vez o multiples
-def thread_accept():
-    try:
-        while True:
-            con, address = s.accept()                          
-            print("Conexión establecida con: " + str(address))
-            tmp_tup = (address[0], con)
-            l_cons.append(tmp_tup)  
-            print("Direcciones IP conectadas: {}".format([x[0] for x in l_cons]))
-            thread_r = threading.Thread(target=thread_recv, args=(con,address))
-            thread_r.daemon = True
-            thread_r.start()
-            if end is True:
-                break
-    except:
-        print("Hilo \'accept()\' finalizó")
-
-thread_a = threading.Thread(target=thread_accept)
-# thread_a.daemon = True
-thread_a.start()
-
-# Ciclo de input
-while True:
-    msg = input()
-    if(msg.lower() == 'exit'):
-        end = True
-        break
-    if(len(l_cons) > 0):
-        for c in l_cons:
-            c[1].send(msg.encode())
+def validate_ips():
+    if(len(sys.argv) != 2):
+        print("Sintaxis no valida")
+        return -1
     else:
-        print("No hay conexiones activas")
+        if(',' in sys.argv[1]):     #IPs no consecutivas
+            tmp = sys.argv[1].split(',')
+            for i in tmp:
+                if(format_ip(i.split('.')) == -1):
+                    return -1
+            l_ips.extend(tmp)
+        elif(':' in sys.argv[1]):   #Rango de IPs consecutivas
+            l_tmp = sys.argv[1].split(':')        
+            l_min = l_tmp[0].split('.')
+            l_max = l_tmp[1].split('.')
+            if(format_ip(l_min) == -1 or format_ip(l_max) == -1):
+                return -1
+            for i in range(0,2):
+                if(l_min[i] != l_max[i]):
+                    print("IPs de rango no coincide")
+                    return -1
+            if(l_min[3] < l_max[3]):
+                for i in range(int(l_min[3]), int(l_max[3])+1):
+                    tmp_arr = [l_min[0], l_min[1], l_min[2], str(i)]
+                    tmp_str = '.'.join([item for item in tmp_arr])
+                    l_ips.append(tmp_str)
+            else:
+                print("Segunda IP es menor a primera IP")
+                return -1
+        else:                       # Solo una dirección
+            if(format_ip(sys.argv[1].split('.')) == -1):
+                return -1
+            l_ips.append(sys.argv[1])
+    print(l_ips)
 
-# Se cierran las conexiones activas 
-for con in l_cons:
-    con[1].close()
+def thread_recv():
+    print('a')
 
-s.close()
+def thread_ip(ip):
+    try:
+        s = socket.socket()
+        s.connect((ip,12345))
+    except Exception as e:
+        print("No se pudo conectar con: " + ip + "\n"+ str(e))
+    else:
+        print("Conexión con " + ip + " exitosa")
+        # Input
+        # thread_recv
+
+def main():
+    end = False
+    if(validate_ips() == -1):
+        end = True
+    print(l_ips)
+    for ip in l_ips:
+        thread_i = threading.Thread(target=thread_ip, args=(ip,))
+        thread_i.start()
+    # 1. Verifica el argv
+    # 2. Crea hilo por c/ip
+    # 3. El hilo intenta conectarse al cliente de su ip, si falla muere hilo
+    # 4. Si no falla, crea otro hilo pa recibir y utiliza ese mismo para input
+    print('a')
+    if(end is True):
+        print("EXIT")
+        return
+
+main()
+# s.close()
