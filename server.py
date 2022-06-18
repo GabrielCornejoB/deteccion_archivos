@@ -47,21 +47,19 @@ def validate_ips():
             if(format_ip(sys.argv[1].split('.')) == -1):
                 return -1
             l_ips.append(sys.argv[1])
-    print(l_ips)
 
-def thread_recv():
-    print('a')
+l_sockets = []
+l_sw = []
 
-def thread_ip(ip):
+def thread_recv(ip):
     try:
         s = socket.socket()
         s.connect((ip,12345))
+        l_sockets.append(s)
     except Exception as e:
         print("No se pudo conectar con: " + ip + "\n"+ str(e))
     else:
         print("Conexión con " + ip + " exitosa")
-        # Input
-        # thread_recv
 
 def main():
     end = False
@@ -69,13 +67,38 @@ def main():
         end = True
     print(l_ips)
     for ip in l_ips:
-        thread_i = threading.Thread(target=thread_ip, args=(ip,))
-        thread_i.start()
-    # 1. Verifica el argv
-    # 2. Crea hilo por c/ip
-    # 3. El hilo intenta conectarse al cliente de su ip, si falla muere hilo
-    # 4. Si no falla, crea otro hilo pa recibir y utiliza ese mismo para input
-    print('a')
+        thread_ip = threading.Thread(target=thread_recv, args=(ip,))
+        thread_ip.start()
+
+    while(True):
+        msg = input()
+        if(msg.lower() == 'exit'):
+            end = True
+            break
+        # elif(msg.lower().startswith("add")):
+        #     tokens = msg.split()
+        #     if(len(tokens) > 1):
+        #         for t in tokens[1:]:
+        #             l_sw.append(t)
+        #     print("Search words: " + str(l_sw))
+        # elif(msg.lower().startswith('clear')):
+        #     l_sw.clear()
+        #     print("Se borraron las palabras de busqueda")
+        # elif(msg.lower().startswith('search')):
+        #     if(len(l_sw) == 0):
+        #         print("Debe definir las palabras de busqueda antes de realizar la consulta.")
+        #     elif(len(l_sockets) == 0):
+        #         print("El servidor no se encuentra conectado a ningún cliente")
+        #     else:
+        #         tokens = msg.split()
+        #         if(len(tokens) != 2):
+        #             print("El comando \'search\' solo lleva un argumento")
+        #             break
+        elif(msg.lower().startswith("add") or msg.lower().startswith('clear') or msg.lower().startswith('search')):
+            for s in l_sockets:
+                s.send(msg.encode())
+        else:
+            print("Comando invalido")
     if(end is True):
         print("EXIT")
         return

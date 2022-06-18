@@ -27,4 +27,28 @@ con, address = s.accept()
 
 print("conectó")
 
-# Thread_recv()
+l_sw = []
+
+while(True):
+    msg = s.recv(1024).decode()
+    print("from server: " + msg)
+    if(msg.lower().startswith('search')):
+        tokens = msg.split()
+        if(len(tokens) != 2):
+            print("El comando \'search\' solo lleva un argumento")
+        else:
+            print("Realizando busqueda")
+            try:
+                ans = search.start_search(l_sw, tokens[1])
+                print("Busqueda finalizada")
+            except Exception as e:
+                ans = "No se pudo realizar la consulta." + e
+    elif(msg.lower().startswith('add')):
+        tokens = msg.split()
+        for t in tokens[1:]:
+            l_sw.append(t)
+        
+
+
+s.close()
+
