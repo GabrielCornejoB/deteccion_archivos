@@ -1,3 +1,4 @@
+from http.server import ThreadingHTTPServer
 import socket
 import threading
 import sys
@@ -29,26 +30,46 @@ print("conectó")
 
 l_sw = []
 
-while(True):
-    msg = s.recv(1024).decode()
-    print("from server: " + msg)
-    if(msg.lower().startswith('search')):
-        tokens = msg.split()
-        if(len(tokens) != 2):
-            print("El comando \'search\' solo lleva un argumento")
-        else:
-            print("Realizando busqueda")
-            try:
-                ans = search.start_search(l_sw, tokens[1])
-                print("Busqueda finalizada")
-            except Exception as e:
-                ans = "No se pudo realizar la consulta." + e
-    elif(msg.lower().startswith('add')):
-        tokens = msg.split()
-        for t in tokens[1:]:
-            l_sw.append(t)
-        
+def thread_recv():
+    while(True):
+        msg = con.recv(1024).decode()
+        print("from server: " + msg)
+        if(msg.lower().startswith('search')):
+            if(len(l_sw) == 0):
+                con.send("[error] No hay palabras de busqueda.".encode())
+            else:
+                tokens = msg.split()
+                if(len(tokens) != 2):
+                    con.send("[error] El comando \'search\' solo lleva un argumento.".encode())
+                else:
+                    print("Realizando busqueda")
+                    try:
+                        ans = search.start_search(l_sw, tokens[1])
+                        print("Busqueda finalizada")
+                    except Exception as e:
+                        ans = "No se pudo realizar la consulta." + e
+                    con.send(ans.encode())
+        elif(msg.lower().startswith('add')):
+            tokens = msg.split()
+            if(len(tokens) > 1):
+                for t in tokens[1:]:
+                    l_sw.append(t)
+                con.send(("[sw] Search words: {}".format(l_sw)).encode())
+            else:
+                con.send("[error] Comando \'add\' incompleto.".encode())
+        elif(msg.lower().startswith('clear')):
+            l_sw.clear()
+            con.send("[cl] Se borraron las palabras de busqueda exitosamente.".encode())
+        elif(msg.lower().startswith('exit')):
+            con.send('[exit]'.encode())
+            break
 
+def main():
+    thread_r = threading.Thread(target=thread_recv)
+    thread_r.start()
+    while(thread_r.is_alive()):
+        pass
 
+main()     
 s.close()
 
