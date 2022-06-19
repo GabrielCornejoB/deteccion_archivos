@@ -62,7 +62,7 @@ def thread_recv(ip):
         while(True):
             msg = s.recv(102400).decode()
             if(msg.startswith('[error]') or msg.startswith('[sw]') or msg.startswith('[exit]') or msg.startswith('[cl]')):
-                print("from client: " + msg)
+                print("from client(" + ip + "): " + msg)
                 if(msg.startswith('[exit]')):
                     break
             else:
