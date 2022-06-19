@@ -70,10 +70,10 @@ def thread_recv(ip):
                 day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
                 output_name = 'outputs/output('+ ip + ')-' +day_timef+'.txt'   
                 output = open(output_name, "w", encoding='utf-8')
-                print("Creando output...")
+                print("(" + ip + ") Creando output...")
                 output.write(msg)
                 output.close()
-                print("Output creado exitosamente") 
+                print("(" + ip + ") Output creado exitosamente") 
             
 def main():
     # Creación y conexión de IPs
