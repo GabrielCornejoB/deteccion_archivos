@@ -100,6 +100,13 @@ Por otro lado, si queremos buscar varias palabras, sería de la siguiente manera
 
     py .\main.py palabra1 palabra2 palabra3 ruta
 
-Nota: El programa no esta limitado solamente a 3 palabras, se pueden buscar más, pero tener en cuenta que mientras más palabras sean más se va a demorar en ejecutar el programa
+### Aclaracines palabras
+* El programa no está limitado solo a 3 palabras, se pueden buscar más, pero tener en cuenta que mientras más palabras, más largo será el tiempo de ejecución del programa
+* Si se desea buscar una palabra compuesta por dos palabras (Ej: tipo id), se deben colocar las palabras con comilla simple, de la siguiente manera: 'tipo id', asi el programa la reconocerá como una sola palabra de busqueda
 
-NOTA: La ruta debe ser separada por '\' y no debe terminar en backslash, lo ideal es que sea copiada y pegada del explorados de archivos. Ej: C:\Users\usuario\Documents
+### Aclaraciones ruta
+* La ruta debe de estar separada por backslash y no por slash sencillo, si queremos copiarla de una manera más sencilla, en el explorador de archivos nos ubicamos en la ruta donde deseamos buscar y copiamos y pegamos la ruta que aparece arriba.
+* La ruta no debe finalizar en backslash sino en el nombre de la carpeta donde buscaremos.
+* Si la ruta que deseamos buscar tiene espacios, debemos aplicar lo mismo del punto anterior, la ruta debemos de colocarla con comilla simple
+* Ej 1: C:\Users\usuario\Desktop
+* Ej 2: 'D:\carpeta\subcarpeta\mi carpeta'
