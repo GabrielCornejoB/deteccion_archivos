@@ -106,5 +106,3 @@ if(len(sys.argv) >= 3):
     for s in start_search(tmp_l, sys.argv[-1]):
         output.write(s)
     print("Busqueda finalizada. Tiempo de ejecución: {0:5f} segundos".format((time.time()-start_time)))
-else:
-    print('[Error]: Comando incompleto')

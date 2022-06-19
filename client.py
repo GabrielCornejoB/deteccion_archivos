@@ -38,22 +38,21 @@ def thread_recv():
             if(len(l_sw) == 0):
                 con.send("[error] No hay palabras de busqueda.".encode())
             else:
-                tokens = msg.split()
-                if(len(tokens) != 2):
-                    con.send("[error] El comando \'search\' solo lleva un argumento.".encode())
+                if(len(msg) <= 7):
+                    con.send("[error] Comando \'search\' incompleto.".encode())
                 else:
+                    path_n = msg[7:]
                     print("Realizando busqueda")
                     try:
-                        ans = search.start_search(l_sw, tokens[1])
+                        ans = search.start_search(l_sw, path_n)
                         print("Busqueda finalizada")
                     except Exception as e:
                         ans = "No se pudo realizar la consulta." + e
                     con.send(ans.encode())
         elif(msg.lower().startswith('add')):
-            tokens = msg.split()
-            if(len(tokens) > 1):
-                for t in tokens[1:]:
-                    l_sw.append(t)
+            if(len(msg) > 4):
+                word = msg[4:]
+                l_sw.append(word)
                 con.send(("[sw] Search words: {}".format(l_sw)).encode())
             else:
                 con.send("[error] Comando \'add\' incompleto.".encode())

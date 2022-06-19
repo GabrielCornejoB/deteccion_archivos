@@ -54,13 +54,11 @@ Lo siguiente sería cambiarnos al dispositivo donde deseamos buscar los archivos
 
 Si realizamos bien lo anterior, el cliente se conectará al servidor y se confirmará en ambas partes que se estableció conexión.
 
-Una vez iniciado el programa, tendremos que específicar que palabras deseamos buscar en los archivos, esto lo hacemos con el comando "add", con este comando podemos adicionar 1 o varias palabras al mismo tiempo, Si queremos agregar solo una lo escribimos así:
+Una vez iniciado el programa, tendremos que específicar que palabras deseamos buscar en los archivos, esto lo hacemos con el comando "add", con este comando podemos adicionar unicamente 1 palabra a la vez, y se hace con el siguiente comando:
 
     add palabra
 
-Pero si queremos colocar varias podemos usarlo de la siguiente manera:
-
-    add palabra1 palabra2 palabra3
+Si queremos agregar más palabras volvemos a usar el comando pero con la neuva palabra y esta se agregará a la lista de palabras de busqueda.
 
 ---
 
@@ -68,7 +66,7 @@ Lo siguiente sería realizar las consultas desde el dispositivo que hace de serv
 
     search ruta donde buscar
 
-NOTA: La ruta debe ser separada por '\' y no debe terminar en backslash, lo ideal es que sea copiada y pegada del explorados de archivos. Ej: C:\Users\usuario\Documents
+NOTA: La ruta debe ser separada por '\' y no debe terminar en backslash, lo ideal es que sea copiada y pegada del explorador de archivos. Ej: C:\Users\usuario\Documents
 
 Despues de realizar esta consulta el cliente la procesará, despues de un momento mandará un mensaje de que ya finalizó y el servidor generará un archivo de texto con el resultado de la consulta. En esta se ve en que archivos se encuentra la palabra buscada.
 
