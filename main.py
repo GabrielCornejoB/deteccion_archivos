@@ -9,10 +9,15 @@ import time
 l_exts = ['.csv','.xlsx','.xls','.txt']                         #Lista con las extensiones de los archivos a buscar
 l_searchWords = []                                              #Lista de palabras clave a buscar
 l_sumFiles = []                                                 #Lista de todos los archivos para el resumen
-# Lista donde se adicionaran las distintas cadenas, esta luego será retornada
-l_return = []
 
 warnings.filterwarnings('ignore', category=UserWarning, module='openpyxl')
+# warnings.filterwarnings('ignore', category=DTypeWarning, module='pandas')
+
+now = datetime.now()
+day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
+output_name = 'outputs/output(local)-' + day_timef+ '.txt'   
+output = open(output_name, "w", encoding='utf-8')
+start_time = time.time()
 
 def search_words(path, words):
     files = []
@@ -21,29 +26,31 @@ def search_words(path, words):
         files.extend(glob.glob(tmp_path, recursive=True))
 
     for word in words:
-        l_return.append("\nLa palabra " + word.upper() + " se encuentra en los siguientes archivos:")
+        print("Buscando la palabra \'" + word + "\'...")
+        output.write("\nLa palabra " + word.upper() + " se encuentra en los siguientes archivos:")
         for filename in files:
             if(filename.lower().endswith(".csv")):
                 search = search_csv(filename, word.upper())
                 if(search > 0):
-                    l_return.append(' - ' + filename)
+                    output.write(' - ' + filename)
             elif(filename.lower().endswith(".xlsx")):
                 search = search_xlsx(filename, word.upper())
                 if(search > 0):
-                    l_return.append(' - ' + filename)
+                    output.write(' - ' + filename)
             elif(filename.lower().endswith(".xls")):
                 search = search_xls(filename, word.upper())
                 if(search > 0):
-                    l_return.append(' - ' + filename)
+                    output.write(' - ' + filename)
             elif(filename.lower().endswith(".txt")):
                 search = search_txt(filename, word.upper())
                 if(search > 0):
-                    l_return.append(' - ' + filename)
+                    output.write(' - ' + filename)
 
 def search_csv(csvName, word):
     try:
         df = pd.read_csv(csvName, sep=';', encoding='utf-8')
-    except Exception:
+    except Exception as e:
+        print("No se pudo leer " + csvName + "." + e)
         return -1
     columns = list(df.columns.values)
     l = [c for c in columns if word in str(c).upper()]
@@ -52,7 +59,8 @@ def search_csv(csvName, word):
 def search_xlsx(excelName, word):
     try:
         df = pd.read_excel(excelName, engine='openpyxl')
-    except Exception:
+    except Exception as e:
+        print("No se pudo leer " + excelName + "." + e)
         return -1   
     columns = list(df.columns.values)
     l = [c for c in columns if word in str(c).upper()]
@@ -61,7 +69,8 @@ def search_xlsx(excelName, word):
 def search_xls(excelName, word):
     try:
         df = pd.read_excel(excelName, engine='xlrd')
-    except Exception:
+    except Exception as e:
+        print("No se pudo leer " + excelName + "." + e)
         return -1
     columns = list(df.columns.values)
     l = [c for c in columns if word in str(c).upper()]
@@ -71,7 +80,8 @@ def search_txt(txtName, word):
     try:
         txtFile = open(txtName)
         lines = txtFile.readlines()
-    except Exception:
+    except Exception as e:
+        print("No se pudo leer " + txtName + "." + e)
         return -1
     count = 0
     for line in lines:
@@ -81,28 +91,15 @@ def search_txt(txtName, word):
     return count
 
 def start_search(words, path):  
-    l_return.clear()
-    # Indica en el output, la busqueda que se realizó para recibir ese resultado
-    l_return.append("[BUSQUEDA]: Ruta: " + path + " Palabra(s): " + str(words))
-    # Busca según la ruta y la palabra entregada, en proceso la busqueda de varias palabras
+    output.write("[BUSQUEDA]: Ruta: " + path + " Palabra(s): " + str(words))
     search_words(path, words)
-    # Junta los elementos de la lista en un string
-    l_return_str = "\n".join([str(elem) for elem in l_return])
-    # Retorna la string con el output del programa
-    return l_return_str
 
-# Si se quiere ejecutar localmente
 if(len(sys.argv) >= 3):
     tmp_l = []
     for i in range(1, len(sys.argv)-1):
         tmp_l.append(sys.argv[i])
     
-    now = datetime.now()
-    day_timef = now.strftime("%d-%m-%Y_%H.%M.%S")
-    output_name = 'outputs/output(local)-' + day_timef+ '.txt'   
-    output = open(output_name, "w", encoding='utf-8')
-    start_time = time.time()
     print("Busqueda en proceso...")
-    for s in start_search(tmp_l, sys.argv[-1]):
-        output.write(s)
+    start_search(tmp_l, sys.argv[-1])
     print("Busqueda finalizada. Tiempo de ejecución: {0:5f} segundos".format((time.time()-start_time)))
+    output.close()
