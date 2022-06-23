@@ -27,30 +27,29 @@ def search_words(path, words):
 
     for word in words:
         print("Buscando la palabra \'" + word + "\'...")
-        output.write("\nLa palabra " + word.upper() + " se encuentra en los siguientes archivos:")
+        output.write("\n\nLa palabra " + word.upper() + " se encuentra en los siguientes archivos:")
         for filename in files:
             if(filename.lower().endswith(".csv")):
                 search = search_csv(filename, word.upper())
                 if(search > 0):
-                    output.write(' - ' + filename)
+                    output.write('\n - ' + filename)
             elif(filename.lower().endswith(".xlsx")):
                 search = search_xlsx(filename, word.upper())
                 if(search > 0):
-                    output.write(' - ' + filename)
+                    output.write('\n - ' + filename)
             elif(filename.lower().endswith(".xls")):
                 search = search_xls(filename, word.upper())
                 if(search > 0):
-                    output.write(' - ' + filename)
+                    output.write('\n - ' + filename)
             elif(filename.lower().endswith(".txt")):
                 search = search_txt(filename, word.upper())
                 if(search > 0):
-                    output.write(' - ' + filename)
+                    output.write('\n - ' + filename)
 
 def search_csv(csvName, word):
     try:
         df = pd.read_csv(csvName, sep=';', encoding='utf-8')
-    except Exception as e:
-        print("No se pudo leer " + csvName + "." + e)
+    except Exception:
         return -1
     columns = list(df.columns.values)
     l = [c for c in columns if word in str(c).upper()]
@@ -59,8 +58,7 @@ def search_csv(csvName, word):
 def search_xlsx(excelName, word):
     try:
         df = pd.read_excel(excelName, engine='openpyxl')
-    except Exception as e:
-        print("No se pudo leer " + excelName + "." + e)
+    except Exception:
         return -1   
     columns = list(df.columns.values)
     l = [c for c in columns if word in str(c).upper()]
@@ -69,8 +67,7 @@ def search_xlsx(excelName, word):
 def search_xls(excelName, word):
     try:
         df = pd.read_excel(excelName, engine='xlrd')
-    except Exception as e:
-        print("No se pudo leer " + excelName + "." + e)
+    except Exception:
         return -1
     columns = list(df.columns.values)
     l = [c for c in columns if word in str(c).upper()]
@@ -80,8 +77,7 @@ def search_txt(txtName, word):
     try:
         txtFile = open(txtName)
         lines = txtFile.readlines()
-    except Exception as e:
-        print("No se pudo leer " + txtName + "." + e)
+    except Exception:
         return -1
     count = 0
     for line in lines:
