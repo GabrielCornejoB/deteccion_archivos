@@ -21,9 +21,11 @@ start_time = time.time()
 
 def search_words(path, words):
     files = []
+    print("Realizando la busqueda de los archivos en \'" + path + "\'");
     for e in l_exts:
         tmp_path =  path + '/**/*' + e
         files.extend(glob.glob(tmp_path, recursive=True))
+    print("Archivos detectados, iniciando la busqueda de las palabras...");
 
     for word in words:
         print("Buscando la palabra \'" + word + "\'...")
